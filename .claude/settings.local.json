@@ -15,7 +15,10 @@
       "PowerShell(Stop-Process -Id 33280 -Force -ErrorAction SilentlyContinue)",
       "Bash(node -e \"const d=require\\('./src/data/etfs.json'\\); console.log\\('Total:', d.length\\); console.log\\('With holdings:', d.filter\\(e=>e.holdings&&e.holdings.length\\).length\\); d.forEach\\(e=>console.log\\(e.ticker, e.assetClass, 'holdings:', e.holdings?.length||0\\)\\);\")",
       "Bash(node -e \"const d=require\\('./src/data/etfs.json'\\); const e=d.find\\(x=>x.ticker==='CSPX'\\); console.log\\(JSON.stringify\\(e.holdings?.[0],null,2\\)\\);\")",
-      "Bash(gh --version)"
+      "Bash(gh --version)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
