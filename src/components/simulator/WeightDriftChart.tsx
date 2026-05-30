@@ -54,8 +54,8 @@ function CustomTooltip({ active, payload, label }: TooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
   const total = payload.reduce((s, p) => s + p.value, 0);
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-md px-4 py-3 text-xs">
-      <p className="font-semibold text-gray-700 mb-2">Anno {label}</p>
+    <div className="bg-white border border-gray-200 rounded-lg shadow-md px-4 py-3 text-xs dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
+      <p className="font-semibold text-gray-700 mb-2 dark:text-gray-300">Anno {label}</p>
       {payload.slice().reverse().map(p => (
         <p key={p.dataKey} style={{ color: p.color }} className="font-medium flex justify-between gap-3">
           <span>{p.name}</span>

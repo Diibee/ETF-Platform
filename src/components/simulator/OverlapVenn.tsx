@@ -38,10 +38,10 @@ export function OverlapVenn({ a, b, size = 240 }: OverlapVennProps) {
   const unknown = overlap == null;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center">
+    <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center dark:bg-gray-900 dark:border-gray-700">
       <div className="flex items-baseline gap-2 mb-2 text-sm">
         <span className="font-semibold" style={{ color: aFill }}>{a.ticker}</span>
-        <span className="text-gray-400">↔</span>
+        <span className="text-gray-400 dark:text-gray-500">↔</span>
         <span className="font-semibold" style={{ color: bFill }}>{b.ticker}</span>
       </div>
 
@@ -93,17 +93,17 @@ export function OverlapVenn({ a, b, size = 240 }: OverlapVennProps) {
         </text>
       </svg>
 
-      <p className="text-xs text-gray-500 mt-1 text-center">
+      <p className="text-xs text-gray-500 mt-1 text-center dark:text-gray-400">
         {overlap == null ? (
-          <span className="text-gray-400">Dati holdings non disponibili per uno dei due ETF.</span>
+          <span className="text-gray-400 dark:text-gray-500">Dati holdings non disponibili per uno dei due ETF.</span>
         ) : overlap === 0 ? (
-          <span className="text-green-600 font-medium">Nessuna sovrapposizione. Diversificazione massima.</span>
+          <span className="text-green-600 font-medium dark:text-green-400">Nessuna sovrapposizione. Diversificazione massima.</span>
         ) : overlap < 15 ? (
-          <span className="text-green-600">Sovrapposizione minima.</span>
+          <span className="text-green-600 dark:text-green-400">Sovrapposizione minima.</span>
         ) : overlap < 40 ? (
-          <span className="text-yellow-600">Sovrapposizione moderata.</span>
+          <span className="text-yellow-600 dark:text-yellow-400">Sovrapposizione moderata.</span>
         ) : (
-          <span className="text-red-600 font-medium">Sovrapposizione alta. Possibile ridondanza.</span>
+          <span className="text-red-600 font-medium dark:text-red-400">Sovrapposizione alta. Possibile ridondanza.</span>
         )}
       </p>
     </div>

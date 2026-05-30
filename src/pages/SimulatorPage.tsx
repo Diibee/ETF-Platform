@@ -39,15 +39,15 @@ function formatEur(n: number): string {
 function SummaryCard({ label, value, sub, accent }: {
   label: string; value: string; sub?: string; accent?: 'blue' | 'green' | 'purple';
 }) {
-  const border = accent === 'blue' ? 'border-blue-200 bg-blue-50' :
-    accent === 'green' ? 'border-green-200 bg-green-50' : 'border-purple-200 bg-purple-50';
-  const text = accent === 'blue' ? 'text-blue-700' :
-    accent === 'green' ? 'text-green-700' : 'text-purple-700';
+  const border = accent === 'blue' ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20' :
+    accent === 'green' ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' : 'border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-900/20';
+  const text = accent === 'blue' ? 'text-blue-700 dark:text-blue-400' :
+    accent === 'green' ? 'text-green-700 dark:text-green-400' : 'text-purple-700 dark:text-purple-400';
   return (
     <div className={`border rounded-xl p-4 ${border}`}>
-      <p className="text-xs font-medium text-gray-500 mb-1">{label}</p>
+      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{label}</p>
       <p className={`text-2xl font-bold ${text}`}>{value}</p>
-      {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -153,36 +153,36 @@ export default function SimulatorPage() {
   const weightOff = Math.abs(weightSum - 100) >= 0.5;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Simulatore Compound</h1>
-          <p className="text-gray-500 text-sm mt-1">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Simulatore Compound</h1>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
             Proiezione lordo / netto con tassazione italiana (capital gain 26% + bollo 0,2%)
           </p>
         </div>
 
-        <div className="flex gap-6 items-start">
-          <aside className="w-72 flex-shrink-0 sticky top-20">
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          <aside className="w-full lg:w-72 lg:flex-shrink-0 lg:sticky lg:top-20">
             <SimulatorForm state={form} etfs={etfs} onChange={setForm} />
           </aside>
 
-          <main className="flex-1 space-y-5">
+          <main className="flex-1 min-w-0 space-y-5">
             {/* Portfolio summary */}
-            <div className="bg-white border border-gray-200 rounded-xl px-4 py-3">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3">
               <div className="flex items-center justify-between gap-4 flex-wrap">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
                   Rendimento stimato:{' '}
-                  <span className="font-bold text-blue-600">{annualReturn.toFixed(2)}% annuo</span>
+                  <span className="font-bold text-blue-600 dark:text-blue-400">{annualReturn.toFixed(2)}% annuo</span>
                 </span>
-                <span className="text-xs text-gray-400">
-                  Volatilità: <span className="font-medium text-gray-600">{volatility.toFixed(1)}%</span>
+                <span className="text-xs text-gray-400 dark:text-gray-500">
+                  Volatilità: <span className="font-medium text-gray-600 dark:text-gray-400">{volatility.toFixed(1)}%</span>
                   {' '}· {form.years} anni
                   {finalPortfolio.length > 0 && <> · {finalPortfolio.length} ETF</>}
                 </span>
               </div>
               {weightOff && finalPortfolio.length > 0 && (
-                <p className="text-xs text-yellow-700 bg-yellow-50 rounded px-2 py-1 mt-2">
+                <p className="text-xs text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 rounded px-2 py-1 mt-2">
                   ⚠️ I pesi del portafoglio sommano a {weightSum.toFixed(1)}%. I risultati sono calcolati sui pesi attuali: normalizza per ottenere proiezioni su 100%.
                 </p>
               )}
@@ -191,35 +191,35 @@ export default function SimulatorPage() {
             {/* Portfolio composition (when multi-ETF) */}
             {portfolioMetrics && finalPortfolio.length > 1 && (
               <>
-                <div className="bg-white border border-gray-200 rounded-xl px-5 py-4 space-y-3">
-                  <h3 className="text-sm font-semibold text-gray-700">Composizione del portafoglio</h3>
+                <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Composizione del portafoglio</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                    <div className="bg-gray-50 rounded-lg px-3 py-2">
-                      <p className="text-gray-500">TER pesato</p>
-                      <p className="font-bold text-gray-900">{portfolioMetrics.weightedTer.toFixed(2)}%</p>
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+                      <p className="text-gray-500 dark:text-gray-400">TER pesato</p>
+                      <p className="font-bold text-gray-900 dark:text-white">{portfolioMetrics.weightedTer.toFixed(2)}%</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg px-3 py-2">
-                      <p className="text-gray-500">Holdings effettivi</p>
-                      <p className="font-bold text-gray-900">{portfolioMetrics.effectiveHoldings ?? 'n.d.'}</p>
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+                      <p className="text-gray-500 dark:text-gray-400">Holdings effettivi</p>
+                      <p className="font-bold text-gray-900 dark:text-white">{portfolioMetrics.effectiveHoldings ?? 'n.d.'}</p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg px-3 py-2">
-                      <p className="text-gray-500">Overlap medio</p>
-                      <p className="font-bold text-gray-900">
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+                      <p className="text-gray-500 dark:text-gray-400">Overlap medio</p>
+                      <p className="font-bold text-gray-900 dark:text-white">
                         {portfolioMetrics.averageOverlap != null ? `${portfolioMetrics.averageOverlap}%` : 'n.d.'}
                       </p>
                     </div>
-                    <div className="bg-gray-50 rounded-lg px-3 py-2">
-                      <p className="text-gray-500">Correlazione media</p>
-                      <p className="font-bold text-gray-900">{portfolioMetrics.averageCorrelation ?? 'n.d.'}</p>
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+                      <p className="text-gray-500 dark:text-gray-400">Correlazione media</p>
+                      <p className="font-bold text-gray-900 dark:text-white">{portfolioMetrics.averageCorrelation ?? 'n.d.'}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Correlation heatmap */}
-                <div className="bg-white border border-gray-200 rounded-xl px-5 py-4 space-y-3">
+                <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-700">Matrice di correlazione</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Matrice di correlazione</h3>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       Visualizza la diversificazione tra i singoli ETF. Valori vicini a 1 indicano ridondanza.
                     </p>
                   </div>
@@ -227,10 +227,10 @@ export default function SimulatorPage() {
                 </div>
 
                 {/* Overlap Venn diagrams */}
-                <div className="bg-white border border-gray-200 rounded-xl px-5 py-4 space-y-3">
+                <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-700">Sovrapposizione tra ETF</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Sovrapposizione tra ETF</h3>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       Quanto i titoli sottostanti dei singoli ETF si sovrappongono. Più si toccano, più stai comprando le stesse aziende due volte.
                     </p>
                   </div>
@@ -238,10 +238,10 @@ export default function SimulatorPage() {
                 </div>
 
                 {/* Look-through holdings table */}
-                <div className="bg-white border border-gray-200 rounded-xl px-5 py-4 space-y-3">
+                <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-700">Titoli sottostanti (look-through)</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Titoli sottostanti (look-through)</h3>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       Aggregazione delle posizioni dei singoli ETF, ponderate per il peso nel portafoglio.
                     </p>
                   </div>
@@ -250,17 +250,17 @@ export default function SimulatorPage() {
 
                 {/* Weight drift over time */}
                 {result.yearlyPerEtf && (
-                  <div className="bg-white border border-gray-200 rounded-xl px-5 py-4 space-y-3">
+                  <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
                     <div className="flex items-baseline justify-between gap-3">
                       <div>
-                        <h3 className="text-sm font-semibold text-gray-700">Drift dei pesi nel tempo</h3>
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Drift dei pesi nel tempo</h3>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                           {form.rebalancing === 'annual'
                             ? 'Ribilanciamento annuale attivo: i pesi tornano sempre al target.'
                             : 'Nessun ribilanciamento: gli ETF crescono indipendentemente, i pesi si spostano.'}
                         </p>
                       </div>
-                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${form.rebalancing === 'annual' ? 'bg-blue-100 text-blue-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${form.rebalancing === 'annual' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400' : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/20 dark:text-yellow-400'}`}>
                         {form.rebalancing === 'annual' ? 'Annuale' : 'Drift'}
                       </span>
                     </div>
@@ -280,12 +280,12 @@ export default function SimulatorPage() {
                           const targetPct = (p.weight / sumWeights) * 100;
                           const drift = finalPct - targetPct;
                           return (
-                            <div key={p.etf.isin} className="bg-gray-50 rounded-lg px-3 py-2 flex items-center justify-between gap-2">
-                              <span className="font-medium text-gray-700">{p.etf.ticker}</span>
-                              <span className="text-gray-500">
-                                {targetPct.toFixed(1)}% → <span className="font-semibold text-gray-900">{finalPct.toFixed(1)}%</span>
+                            <div key={p.etf.isin} className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2 flex items-center justify-between gap-2">
+                              <span className="font-medium text-gray-700 dark:text-gray-300">{p.etf.ticker}</span>
+                              <span className="text-gray-500 dark:text-gray-400">
+                                {targetPct.toFixed(1)}% → <span className="font-semibold text-gray-900 dark:text-white">{finalPct.toFixed(1)}%</span>
                                 {' '}
-                                <span className={drift > 1 ? 'text-red-600' : drift < -1 ? 'text-blue-600' : 'text-gray-400'}>
+                                <span className={drift > 1 ? 'text-red-600' : drift < -1 ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}>
                                   ({drift >= 0 ? '+' : ''}{drift.toFixed(1)})
                                 </span>
                               </span>
@@ -298,10 +298,10 @@ export default function SimulatorPage() {
                 )}
 
                 {/* Automated insights */}
-                <div className="bg-white border border-gray-200 rounded-xl px-5 py-4 space-y-3">
+                <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-700">Cosa ci dice il portafoglio</h3>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Cosa ci dice il portafoglio</h3>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       Lettura automatica delle metriche: cosa sta funzionando, cosa vale la pena rivedere.
                     </p>
                   </div>
@@ -321,26 +321,26 @@ export default function SimulatorPage() {
             </div>
 
             {/* Tax breakdown */}
-            <div className="bg-white border border-gray-200 rounded-xl px-5 py-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Riepilogo fiscale</h3>
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Riepilogo fiscale</h3>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500 text-xs">Capitale investito</p>
-                  <p className="font-semibold text-gray-900">{formatEur(totalInvested)}</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">Capitale investito</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">{formatEur(totalInvested)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-xs">Guadagno netto</p>
-                  <p className={`font-semibold ${gain >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">Guadagno netto</p>
+                  <p className={`font-semibold ${gain >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600'}`}>
                     {gain >= 0 ? '+' : ''}{formatEur(gain)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-xs">Carico fiscale totale</p>
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">Carico fiscale totale</p>
                   <p className="font-semibold text-red-600">−{formatEur(taxDrag)}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 text-xs">Efficienza netta</p>
-                  <p className="font-semibold text-gray-900">
+                  <p className="text-gray-500 dark:text-gray-400 text-xs">Efficienza netta</p>
+                  <p className="font-semibold text-gray-900 dark:text-white">
                     {result.grossFinal > 0 ? ((result.netFinal / result.grossFinal) * 100).toFixed(1) : 'n/d'}%
                   </p>
                 </div>
@@ -348,50 +348,50 @@ export default function SimulatorPage() {
             </div>
 
             {/* Chart */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-gray-700 mb-4">Andamento anno per anno</h3>
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Andamento anno per anno</h3>
               <SimulatorChart data={chartData} />
             </div>
 
             {/* Monte Carlo */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 space-y-4">
               <div>
-                <h3 className="text-sm font-semibold text-gray-700">Monte Carlo · 1.000 simulazioni</h3>
-                <p className="text-xs text-gray-400 mt-0.5">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Monte Carlo · 1.000 simulazioni</h3>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                   Distribuzione dei possibili valori netti a scadenza basata su volatilità storica (log-normale).
                 </p>
               </div>
               <div className="grid grid-cols-3 gap-3">
-                <div className="border border-gray-200 rounded-lg p-3">
-                  <p className="text-xs text-gray-500 mb-1">Scenario pessimistico (P10)</p>
-                  <p className="text-lg font-bold text-gray-700">{formatEur(result.monteCarlo.finalP10)}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">10% dei casi peggiore</p>
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Scenario pessimistico (P10)</p>
+                  <p className="text-lg font-bold text-gray-700 dark:text-gray-300">{formatEur(result.monteCarlo.finalP10)}</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">10% dei casi peggiore</p>
                 </div>
-                <div className="border border-purple-200 bg-purple-50 rounded-lg p-3">
-                  <p className="text-xs text-purple-600 mb-1">Scenario mediano (P50)</p>
-                  <p className="text-lg font-bold text-purple-700">{formatEur(result.monteCarlo.finalP50)}</p>
-                  <p className="text-xs text-purple-400 mt-0.5">Risultato più probabile</p>
+                <div className="border border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
+                  <p className="text-xs text-purple-600 dark:text-purple-400 mb-1">Scenario mediano (P50)</p>
+                  <p className="text-lg font-bold text-purple-700 dark:text-purple-400">{formatEur(result.monteCarlo.finalP50)}</p>
+                  <p className="text-xs text-purple-400 dark:text-purple-500 mt-0.5">Risultato più probabile</p>
                 </div>
-                <div className="border border-orange-200 bg-orange-50 rounded-lg p-3">
-                  <p className="text-xs text-orange-600 mb-1">Scenario ottimistico (P90)</p>
-                  <p className="text-lg font-bold text-orange-600">{formatEur(result.monteCarlo.finalP90)}</p>
-                  <p className="text-xs text-orange-400 mt-0.5">10% dei casi migliore</p>
+                <div className="border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
+                  <p className="text-xs text-orange-600 dark:text-orange-400 mb-1">Scenario ottimistico (P90)</p>
+                  <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{formatEur(result.monteCarlo.finalP90)}</p>
+                  <p className="text-xs text-orange-400 dark:text-orange-500 mt-0.5">10% dei casi migliore</p>
                 </div>
               </div>
               <MonteCarloChart data={mcChartData} />
             </div>
 
             {/* Year-by-year table */}
-            <div className="bg-white border border-gray-200 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Valori chiave</h3>
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Valori chiave</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="text-left text-xs text-gray-500 border-b border-gray-100">
+                    <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-800">
                       <th className="pb-2 font-medium">Anno</th>
                       <th className="pb-2 font-medium text-right">Investito</th>
-                      <th className="pb-2 font-medium text-right text-blue-600">Lordo</th>
-                      <th className="pb-2 font-medium text-right text-green-600">Netto</th>
+                      <th className="pb-2 font-medium text-right text-blue-600 dark:text-blue-400">Lordo</th>
+                      <th className="pb-2 font-medium text-right text-green-600 dark:text-green-400">Netto</th>
                       <th className="pb-2 font-medium text-right">Δ fisco</th>
                     </tr>
                   </thead>
@@ -399,11 +399,11 @@ export default function SimulatorPage() {
                     {chartData
                       .filter(row => row.year === 1 || row.year % 5 === 0 || row.year === input.years)
                       .map(row => (
-                        <tr key={row.year} className="border-b border-gray-50 last:border-0">
-                          <td className="py-1.5 text-gray-700 font-medium">Anno {row.year}</td>
-                          <td className="py-1.5 text-right text-gray-500">{formatEur(row.investito)}</td>
-                          <td className="py-1.5 text-right text-blue-600 font-medium">{formatEur(row.lordo)}</td>
-                          <td className="py-1.5 text-right text-green-600 font-medium">{formatEur(row.netto)}</td>
+                        <tr key={row.year} className="border-b border-gray-50 dark:border-gray-800 last:border-0">
+                          <td className="py-1.5 text-gray-700 dark:text-gray-300 font-medium">Anno {row.year}</td>
+                          <td className="py-1.5 text-right text-gray-500 dark:text-gray-400">{formatEur(row.investito)}</td>
+                          <td className="py-1.5 text-right text-blue-600 dark:text-blue-400 font-medium">{formatEur(row.lordo)}</td>
+                          <td className="py-1.5 text-right text-green-600 dark:text-green-400 font-medium">{formatEur(row.netto)}</td>
                           <td className="py-1.5 text-right text-red-500 text-xs">−{formatEur(row.lordo - row.netto)}</td>
                         </tr>
                       ))}

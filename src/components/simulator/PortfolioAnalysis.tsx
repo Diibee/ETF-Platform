@@ -12,10 +12,10 @@ interface Insight {
 }
 
 const TONE_STYLES: Record<Tone, string> = {
-  positive: 'bg-green-50 border-green-200 text-green-800',
-  warning:  'bg-red-50 border-red-200 text-red-800',
-  neutral:  'bg-gray-50 border-gray-200 text-gray-700',
-  info:     'bg-blue-50 border-blue-200 text-blue-800',
+  positive: 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-300',
+  warning:  'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-300',
+  neutral:  'bg-gray-50 border-gray-200 text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300',
+  info:     'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-300',
 };
 
 function correlationInsights(portfolio: PortfolioEntry[], metrics: PortfolioMetrics): Insight[] {
@@ -198,7 +198,7 @@ export function PortfolioAnalysis({
 
   if (insights.length === 0) {
     return (
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-gray-500 dark:text-gray-400">
         Aggiungi più ETF al portafoglio per ricevere un'analisi automatica.
       </p>
     );

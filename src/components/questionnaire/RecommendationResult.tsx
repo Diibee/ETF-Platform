@@ -22,9 +22,9 @@ const ASSET_LABEL_COLORS: Record<string, string> = {
 const RISK_LABELS: Record<number, string> = { 1: 'Molto bassa', 2: 'Bassa', 3: 'Moderata', 4: 'Alta', 5: 'Molto alta' };
 
 const SET_ACCENT: Record<PortfolioSet['id'], { ring: string; chip: string; chipText: string }> = {
-  simple:      { ring: 'border-gray-200',   chip: 'bg-gray-100',    chipText: 'text-gray-700' },
-  balanced:    { ring: 'border-blue-300',   chip: 'bg-blue-100',    chipText: 'text-blue-700' },
-  diversified: { ring: 'border-purple-300', chip: 'bg-purple-100',  chipText: 'text-purple-700' },
+  simple:      { ring: 'border-gray-200 dark:border-gray-700',   chip: 'bg-gray-100 dark:bg-gray-700',    chipText: 'text-gray-700 dark:text-gray-300' },
+  balanced:    { ring: 'border-blue-300 dark:border-blue-700',   chip: 'bg-blue-100 dark:bg-blue-900/30', chipText: 'text-blue-700 dark:text-blue-400' },
+  diversified: { ring: 'border-purple-300 dark:border-purple-700', chip: 'bg-purple-100 dark:bg-purple-900/30', chipText: 'text-purple-700 dark:text-purple-400' },
 };
 
 function formatMetric(v: number | null, suffix = ''): string {
@@ -38,7 +38,7 @@ function PortfolioSetCard({ set, onSimulate }: { set: PortfolioSet; onSimulate: 
   for (const e of set.portfolio) allocByClass[e.etf.assetClass] = (allocByClass[e.etf.assetClass] ?? 0) + e.weight;
 
   return (
-    <div className={`bg-white border-2 ${accent.ring} rounded-2xl p-5 space-y-4`}>
+    <div className={`bg-white dark:bg-gray-900 border-2 ${accent.ring} rounded-2xl p-5 space-y-4`}>
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
@@ -46,9 +46,9 @@ function PortfolioSetCard({ set, onSimulate }: { set: PortfolioSet; onSimulate: 
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${accent.chip} ${accent.chipText}`}>
               {set.label}
             </span>
-            <span className="text-xs text-gray-400">{set.portfolio.length} ETF</span>
+            <span className="text-xs text-gray-400 dark:text-gray-500">{set.portfolio.length} ETF</span>
           </div>
-          <p className="text-xs text-gray-500">{set.description}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{set.description}</p>
         </div>
       </div>
 
@@ -74,21 +74,21 @@ function PortfolioSetCard({ set, onSimulate }: { set: PortfolioSet; onSimulate: 
 
       {/* Metrics */}
       <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="bg-gray-50 rounded-lg px-3 py-2">
-          <p className="text-gray-500">TER pesato</p>
-          <p className="font-bold text-gray-900">{set.metrics.weightedTer.toFixed(2)}%</p>
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+          <p className="text-gray-500 dark:text-gray-400">TER pesato</p>
+          <p className="font-bold text-gray-900 dark:text-white">{set.metrics.weightedTer.toFixed(2)}%</p>
         </div>
-        <div className="bg-gray-50 rounded-lg px-3 py-2">
-          <p className="text-gray-500">Holdings effettivi</p>
-          <p className="font-bold text-gray-900">{formatMetric(set.metrics.effectiveHoldings)}</p>
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+          <p className="text-gray-500 dark:text-gray-400">Holdings effettivi</p>
+          <p className="font-bold text-gray-900 dark:text-white">{formatMetric(set.metrics.effectiveHoldings)}</p>
         </div>
-        <div className="bg-gray-50 rounded-lg px-3 py-2">
-          <p className="text-gray-500">Overlap medio</p>
-          <p className="font-bold text-gray-900">{formatMetric(set.metrics.averageOverlap, '%')}</p>
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+          <p className="text-gray-500 dark:text-gray-400">Overlap medio</p>
+          <p className="font-bold text-gray-900 dark:text-white">{formatMetric(set.metrics.averageOverlap, '%')}</p>
         </div>
-        <div className="bg-gray-50 rounded-lg px-3 py-2">
-          <p className="text-gray-500">Correlazione media</p>
-          <p className="font-bold text-gray-900">{formatMetric(set.metrics.averageCorrelation)}</p>
+        <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+          <p className="text-gray-500 dark:text-gray-400">Correlazione media</p>
+          <p className="font-bold text-gray-900 dark:text-white">{formatMetric(set.metrics.averageCorrelation)}</p>
         </div>
       </div>
 
@@ -98,7 +98,7 @@ function PortfolioSetCard({ set, onSimulate }: { set: PortfolioSet; onSimulate: 
           <div key={entry.etf.isin} className="flex items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2 min-w-0">
               <span className={`w-1 h-4 rounded-full flex-shrink-0 ${ASSET_COLORS[entry.etf.assetClass]}`} />
-              <span className="text-gray-700 truncate">{entry.etf.name}</span>
+              <span className="text-gray-700 dark:text-gray-300 truncate">{entry.etf.name}</span>
             </div>
             <Badge variant="gray" size="xs">{entry.weight}%</Badge>
           </div>
@@ -108,14 +108,14 @@ function PortfolioSetCard({ set, onSimulate }: { set: PortfolioSet; onSimulate: 
       {/* Top holdings preview */}
       {set.metrics.topHoldings.length > 0 && (
         <details className="text-xs">
-          <summary className="cursor-pointer text-gray-500 hover:text-gray-700 select-none">
+          <summary className="cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 select-none">
             Top holdings look-through ({set.metrics.topHoldings.length})
           </summary>
           <div className="mt-2 space-y-1">
             {set.metrics.topHoldings.map(h => (
-              <div key={h.ticker} className="flex justify-between text-gray-600">
+              <div key={h.ticker} className="flex justify-between text-gray-600 dark:text-gray-400">
                 <span className="truncate pr-2">{h.name}</span>
-                <span className="font-medium text-gray-900 flex-shrink-0">{h.weight.toFixed(1)}%</span>
+                <span className="font-medium text-gray-900 dark:text-white flex-shrink-0">{h.weight.toFixed(1)}%</span>
               </div>
             ))}
           </div>
@@ -161,15 +161,15 @@ export function RecommendationResult({ profile, recommendation, onReset }: Recom
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-gray-900">La tua allocazione consigliata</h2>
-        <p className="text-sm text-gray-500 mt-1">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">La tua allocazione consigliata</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Profilo: {profile.horizon} anni · Rischio {RISK_LABELS[profile.riskTolerance]} · Età {profile.age}
         </p>
       </div>
 
       {/* Overall allocation */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 space-y-3">
-        <h3 className="text-sm font-semibold text-gray-700">Allocazione target per asset class</h3>
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-5 space-y-3">
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Allocazione target per asset class</h3>
         <div className="flex h-5 rounded-full overflow-hidden gap-px">
           {overallSlices.map(s => (
             <div key={s.key} className={ASSET_COLORS[s.key]} style={{ width: `${s.value}%` }} />
@@ -180,17 +180,17 @@ export function RecommendationResult({ profile, recommendation, onReset }: Recom
             <div key={s.key} className="flex items-center gap-1.5">
               <span className={`w-2.5 h-2.5 rounded-full ${ASSET_COLORS[s.key]}`} />
               <span className={`text-sm font-semibold ${ASSET_LABEL_COLORS[s.key]}`}>{s.value}%</span>
-              <span className="text-xs text-gray-500">{ASSET_LABELS[s.key]}</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{ASSET_LABELS[s.key]}</span>
             </div>
           ))}
         </div>
-        <p className="text-xs text-gray-500 pt-2 border-t border-gray-100">{recommendation.rationale}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800">{recommendation.rationale}</p>
       </div>
 
       {/* Three sets */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-1">3 portafogli costruiti per te</h3>
-        <p className="text-sm text-gray-500 mb-4">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">3 portafogli costruiti per te</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
           Confronta TER, overlap, correlazione e diversificazione effettiva. Clicca "Prova simulazione" per testarli nel tempo.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -207,21 +207,21 @@ export function RecommendationResult({ profile, recommendation, onReset }: Recom
       {/* Single ETFs */}
       {recommendation.singleEtfs.length > 0 && (
         <div>
-          <h3 className="text-lg font-bold text-gray-900 mb-1">ETF singoli consigliati</h3>
-          <p className="text-sm text-gray-500 mb-4">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">ETF singoli consigliati</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             Alternative individuali coerenti con il tuo profilo, da combinare a mano nel simulatore.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {recommendation.singleEtfs.map((etf: ETF) => (
-              <div key={etf.isin} className="bg-white border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+              <div key={etf.isin} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3 min-w-0">
                   <span className={`w-1 self-stretch rounded-full flex-shrink-0 ${ASSET_COLORS[etf.assetClass]}`} />
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{etf.name}</p>
-                    <p className="text-xs text-gray-400">{etf.ticker} · TER {etf.ter}% · {ASSET_LABELS[etf.assetClass]}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{etf.name}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">{etf.ticker} · TER {etf.ter}% · {ASSET_LABELS[etf.assetClass]}</p>
                   </div>
                 </div>
-                <Link to={`/catalogue/${etf.isin}`} className="text-xs text-blue-600 hover:underline whitespace-nowrap flex-shrink-0">
+                <Link to={`/catalogue/${etf.isin}`} className="text-xs text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap flex-shrink-0">
                   Dettagli →
                 </Link>
               </div>
@@ -235,7 +235,7 @@ export function RecommendationResult({ profile, recommendation, onReset }: Recom
         <button
           type="button"
           onClick={onReset}
-          className="px-5 py-2 rounded-xl border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-50"
+          className="px-5 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
         >
           ← Rifai il questionario
         </button>

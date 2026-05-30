@@ -14,9 +14,9 @@ interface QuestionnaireFormProps {
 }
 
 const OPTION_CLS =
-  'flex items-start gap-3 border rounded-xl px-4 py-3 cursor-pointer transition-colors hover:border-blue-400 hover:bg-blue-50';
-const OPTION_ACTIVE = 'border-blue-500 bg-blue-50';
-const OPTION_IDLE = 'border-gray-200 bg-white';
+  'flex items-start gap-3 border rounded-xl px-4 py-3 cursor-pointer transition-colors hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20';
+const OPTION_ACTIVE = 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-700';
+const OPTION_IDLE = 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900';
 
 function OptionButton({
   active,
@@ -34,9 +34,9 @@ function OptionButton({
       className={`${OPTION_CLS} ${active ? OPTION_ACTIVE : OPTION_IDLE} w-full text-left`}
     >
       <span
-        className={`mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 ${active ? 'border-blue-500 bg-blue-500' : 'border-gray-300'}`}
+        className={`mt-0.5 w-4 h-4 rounded-full border-2 flex-shrink-0 ${active ? 'border-blue-500 bg-blue-500' : 'border-gray-300 dark:border-gray-600'}`}
       />
-      <span className="text-sm text-gray-700">{children}</span>
+      <span className="text-sm text-gray-700 dark:text-gray-300">{children}</span>
     </button>
   );
 }
@@ -45,18 +45,18 @@ function StepHeader({ step, title, subtitle }: { step: Step; title: string; subt
   return (
     <div className="mb-6">
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+        <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-full">
           {step} / {TOTAL_STEPS}
         </span>
-        <div className="flex-1 h-1 bg-gray-100 rounded-full overflow-hidden">
+        <div className="flex-1 h-1 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
           <div
             className="h-full bg-blue-500 rounded-full transition-all"
             style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
           />
         </div>
       </div>
-      <h2 className="text-lg font-bold text-gray-900">{title}</h2>
-      {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white">{title}</h2>
+      {subtitle && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{subtitle}</p>}
     </div>
   );
 }
@@ -87,7 +87,7 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
     <div className="flex gap-3 mt-8">
       {step > 1 && (
         <button type="button" onClick={back}
-          className="px-5 py-2 rounded-xl border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-50">
+          className="px-5 py-2 rounded-xl border border-gray-300 dark:border-gray-600 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
           ← Indietro
         </button>
       )}
@@ -111,7 +111,7 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <div className="space-y-4">
         <input type="range" min={18} max={80} value={age}
           onChange={e => setAge(Number(e.target.value))} className="w-full accent-blue-600" />
-        <p className="text-center text-3xl font-bold text-blue-600">{age} anni</p>
+        <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">{age} anni</p>
       </div>
       {NAV}
     </div>
@@ -123,8 +123,8 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <div className="space-y-4">
         <input type="range" min={1} max={40} value={horizon}
           onChange={e => setHorizon(Number(e.target.value))} className="w-full accent-blue-600" />
-        <p className="text-center text-3xl font-bold text-blue-600">{horizon} anni</p>
-        <div className="flex justify-between text-xs text-gray-400"><span>1 anno</span><span>40 anni</span></div>
+        <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">{horizon} anni</p>
+        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500"><span>1 anno</span><span>40 anni</span></div>
       </div>
       {NAV}
     </div>
@@ -164,7 +164,7 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
         ] as [UserProfile['riskTolerance'], string, string][]).map(([val, label, sub]) => (
           <OptionButton key={val} active={riskTolerance === val} onClick={() => setRiskTolerance(val)}>
             <span><span className="font-semibold">{val}. {label}</span>
-            <span className="block text-gray-400 text-xs mt-0.5">{sub}</span></span>
+            <span className="block text-gray-400 dark:text-gray-500 text-xs mt-0.5">{sub}</span></span>
           </OptionButton>
         ))}
       </div>
@@ -178,10 +178,10 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <div className="space-y-4">
         <input type="range" min={0} max={500000} step={500} value={initialCapital}
           onChange={e => setInitialCapital(Number(e.target.value))} className="w-full accent-blue-600" />
-        <p className="text-center text-3xl font-bold text-blue-600">
+        <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">
           {new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(initialCapital)}
         </p>
-        <div className="flex justify-between text-xs text-gray-400"><span>0 €</span><span>500.000 €</span></div>
+        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500"><span>0 €</span><span>500.000 €</span></div>
       </div>
       {NAV}
     </div>
@@ -193,10 +193,10 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <div className="space-y-4">
         <input type="range" min={0} max={5000} step={50} value={monthlyContribution}
           onChange={e => setMonthlyContribution(Number(e.target.value))} className="w-full accent-blue-600" />
-        <p className="text-center text-3xl font-bold text-blue-600">
+        <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">
           {new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(monthlyContribution)}/mese
         </p>
-        <div className="flex justify-between text-xs text-gray-400"><span>0 €</span><span>5.000 €/mese</span></div>
+        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500"><span>0 €</span><span>5.000 €/mese</span></div>
       </div>
       {NAV}
     </div>
@@ -214,7 +214,7 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
         ] as [UserProfile['experience'], string, string][]).map(([val, label, sub]) => (
           <OptionButton key={val} active={experience === val} onClick={() => setExperience(val)}>
             <span><span className="font-semibold">{label}</span>
-            <span className="block text-gray-400 text-xs mt-0.5">{sub}</span></span>
+            <span className="block text-gray-400 dark:text-gray-500 text-xs mt-0.5">{sub}</span></span>
           </OptionButton>
         ))}
       </div>
@@ -245,9 +245,9 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <div className="space-y-4">
         <input type="range" min={2} max={8} value={preferredEtfCount}
           onChange={e => setPreferredEtfCount(Number(e.target.value))} className="w-full accent-blue-600" />
-        <p className="text-center text-3xl font-bold text-blue-600">{preferredEtfCount} ETF</p>
-        <div className="flex justify-between text-xs text-gray-400"><span>2 (essenziale)</span><span>8 (granulare)</span></div>
-        <p className="text-xs text-center text-gray-500 mt-3">
+        <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">{preferredEtfCount} ETF</p>
+        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500"><span>2 (essenziale)</span><span>8 (granulare)</span></div>
+        <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">
           Ti mostreremo 3 portafogli (Semplice / Bilanciato / Diversificato) intorno a questa preferenza.
         </p>
       </div>

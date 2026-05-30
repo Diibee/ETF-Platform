@@ -45,7 +45,7 @@ export function CorrelationHeatmap({ portfolio }: CorrelationHeatmapProps) {
             <tr>
               <th className="p-1"></th>
               {portfolio.map(p => (
-                <th key={p.etf.isin} className="px-2 py-1 text-gray-500 font-medium text-center min-w-[64px]">
+                <th key={p.etf.isin} className="px-2 py-1 text-gray-500 font-medium text-center min-w-[64px] dark:text-gray-400">
                   {p.etf.ticker}
                 </th>
               ))}
@@ -54,7 +54,7 @@ export function CorrelationHeatmap({ portfolio }: CorrelationHeatmapProps) {
           <tbody>
             {portfolio.map((rowEtf, i) => (
               <tr key={rowEtf.etf.isin}>
-                <th className="pr-2 text-right text-gray-500 font-medium whitespace-nowrap">
+                <th className="pr-2 text-right text-gray-500 font-medium whitespace-nowrap dark:text-gray-400">
                   {rowEtf.etf.ticker}
                 </th>
                 {portfolio.map((_, j) => {
@@ -65,7 +65,7 @@ export function CorrelationHeatmap({ portfolio }: CorrelationHeatmapProps) {
                     <td
                       key={j}
                       title={`${portfolio[i]!.etf.name} ↔ ${portfolio[j]!.etf.name}: ${v.toFixed(2)}`}
-                      className={`w-16 h-10 text-center font-semibold rounded ${diag ? 'bg-gray-200 text-gray-400' : `${bg} ${text}`}`}
+                      className={`w-16 h-10 text-center font-semibold rounded ${diag ? 'bg-gray-200 text-gray-400 dark:bg-gray-700 dark:text-gray-500' : `${bg} ${text}`}`}
                     >
                       {v.toFixed(2)}
                     </td>
@@ -77,7 +77,7 @@ export function CorrelationHeatmap({ portfolio }: CorrelationHeatmapProps) {
         </table>
       </div>
 
-      <div className="flex items-center gap-2 text-xs text-gray-500 flex-wrap">
+      <div className="flex items-center gap-2 text-xs text-gray-500 flex-wrap dark:text-gray-400">
         <span>Scala:</span>
         <span className="px-2 py-0.5 rounded bg-green-500 text-white font-medium">&lt; -0.3 diversificante</span>
         <span className="px-2 py-0.5 rounded bg-green-200 text-green-900 font-medium">-0.3 ÷ 0</span>
@@ -88,12 +88,12 @@ export function CorrelationHeatmap({ portfolio }: CorrelationHeatmapProps) {
       </div>
 
       {redundancy && (
-        <p className="text-xs bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2">
+        <p className="text-xs bg-red-50 border border-red-200 text-red-700 rounded-lg px-3 py-2 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-300">
           ⚠️ {redundancy}
         </p>
       )}
 
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-gray-400 dark:text-gray-500">
         Correlazione stimata euristicamente da asset class e sovrapposizione dei titoli sottostanti.
         Non si basa su serie storiche dei rendimenti.
       </p>

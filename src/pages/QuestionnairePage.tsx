@@ -17,17 +17,17 @@ export default function QuestionnairePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <div className={`mx-auto px-4 py-10 ${result ? 'max-w-5xl' : 'max-w-2xl'}`}>
         {!result ? (
           <>
             <div className="mb-8">
-              <h1 className="text-2xl font-bold text-gray-900">Questionario di profilazione</h1>
-              <p className="text-gray-500 text-sm mt-1">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Questionario di profilazione</h1>
+              <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
                 9 domande per costruire un portafoglio ETF adatto al tuo profilo.
               </p>
             </div>
-            <div className="bg-white border border-gray-200 rounded-2xl p-6">
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
               <QuestionnaireForm onComplete={handleComplete} />
             </div>
           </>

@@ -14,7 +14,7 @@ export function LookThroughTable({ portfolio }: LookThroughTableProps) {
 
   if (holdings.length === 0) {
     return (
-      <p className="text-xs text-gray-400">
+      <p className="text-xs text-gray-400 dark:text-gray-500">
         Nessun dato di holdings disponibile per gli ETF del portafoglio.
       </p>
     );
@@ -38,10 +38,10 @@ export function LookThroughTable({ portfolio }: LookThroughTableProps) {
 
   return (
     <div className="space-y-2">
-      <p className="text-xs text-gray-500">
+      <p className="text-xs text-gray-500 dark:text-gray-400">
         {holdings.length} titoli sottostanti distinti · {totalCovered.toFixed(1)}% del portafoglio coperto
         {totalCovered < 99 && (
-          <span className="text-gray-400">
+          <span className="text-gray-400 dark:text-gray-500">
             {' '}(la quota restante è in ETF senza dati di holdings, es. bonds, commodities)
           </span>
         )}
@@ -49,7 +49,7 @@ export function LookThroughTable({ portfolio }: LookThroughTableProps) {
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="text-left text-gray-500 border-b border-gray-100">
+            <tr className="text-left text-gray-500 border-b border-gray-100 dark:text-gray-400 dark:border-gray-800">
               <th className="pb-2 font-medium w-10">#</th>
               <th className="pb-2 font-medium">Titolo</th>
               <th className="pb-2 font-medium">Ticker</th>
@@ -61,12 +61,12 @@ export function LookThroughTable({ portfolio }: LookThroughTableProps) {
             {visible.map((h, i) => {
               const sources = sourceByKey.get(h.key) ?? [];
               return (
-                <tr key={h.key} className="border-b border-gray-50 last:border-0">
-                  <td className="py-1.5 text-gray-400">{i + 1}</td>
-                  <td className="py-1.5 text-gray-800">{h.name}</td>
-                  <td className="py-1.5 text-gray-500 font-mono">{h.ticker}</td>
-                  <td className="py-1.5 text-gray-500">{sources.join(', ')}</td>
-                  <td className="py-1.5 text-right font-semibold text-gray-900">{h.weight.toFixed(2)}%</td>
+                <tr key={h.key} className="border-b border-gray-50 last:border-0 dark:border-gray-800">
+                  <td className="py-1.5 text-gray-400 dark:text-gray-500">{i + 1}</td>
+                  <td className="py-1.5 text-gray-800 dark:text-gray-200">{h.name}</td>
+                  <td className="py-1.5 text-gray-500 font-mono dark:text-gray-400">{h.ticker}</td>
+                  <td className="py-1.5 text-gray-500 dark:text-gray-400">{sources.join(', ')}</td>
+                  <td className="py-1.5 text-right font-semibold text-gray-900 dark:text-white">{h.weight.toFixed(2)}%</td>
                 </tr>
               );
             })}
@@ -77,7 +77,7 @@ export function LookThroughTable({ portfolio }: LookThroughTableProps) {
         <button
           type="button"
           onClick={() => setExpanded(v => !v)}
-          className="text-xs text-blue-600 hover:underline"
+          className="text-xs text-blue-600 hover:underline dark:text-blue-400"
         >
           {expanded ? '← Mostra solo top 10' : `Mostra tutti i ${holdings.length} titoli →`}
         </button>

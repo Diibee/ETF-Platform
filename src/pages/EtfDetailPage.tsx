@@ -17,12 +17,12 @@ const etfs = etfsData as unknown as ETF[];
 
 function MetricBox({ label, value, highlight, help }: { label: string; value: string; highlight?: boolean; help?: string }) {
   return (
-    <div className="bg-gray-50 rounded-xl p-4">
-      <p className="text-xs text-gray-500 mb-1 flex items-center">
+    <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4">
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1 flex items-center">
         {label}
         {help && <HelpTooltip content={help} />}
       </p>
-      <p className={`text-lg font-bold ${highlight ? 'text-green-600' : 'text-gray-900'}`}>{value}</p>
+      <p className={`text-lg font-bold ${highlight ? 'text-green-600 dark:text-green-400' : 'text-gray-900 dark:text-white'}`}>{value}</p>
     </div>
   );
 }
@@ -30,14 +30,14 @@ function MetricBox({ label, value, highlight, help }: { label: string; value: st
 function WeightBar({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="text-sm text-gray-700 w-40 truncate flex-shrink-0">{label}</span>
-      <div className="flex-1 bg-gray-100 rounded-full h-2">
+      <span className="text-sm text-gray-700 dark:text-gray-300 w-40 truncate flex-shrink-0">{label}</span>
+      <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-2">
         <div
-          className="bg-blue-500 h-2 rounded-full"
+          className="bg-blue-500 dark:bg-blue-400 h-2 rounded-full"
           style={{ width: `${Math.min(value, 100)}%` }}
         />
       </div>
-      <span className="text-sm font-medium text-gray-900 w-12 text-right">{value.toFixed(1)}%</span>
+      <span className="text-sm font-medium text-gray-900 dark:text-white w-12 text-right">{value.toFixed(1)}%</span>
     </div>
   );
 }
@@ -48,9 +48,9 @@ export default function EtfDetailPage() {
 
   if (!etf) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
-        <p className="text-xl text-gray-600">ETF non trovato</p>
-        <Link to="/catalogue" className="text-blue-600 hover:underline text-sm">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col items-center justify-center gap-4">
+        <p className="text-xl text-gray-600 dark:text-gray-400">ETF non trovato</p>
+        <Link to="/catalogue" className="text-blue-600 dark:text-blue-400 hover:underline text-sm">
           ← Torna al catalogo
         </Link>
       </div>
@@ -68,19 +68,19 @@ export default function EtfDetailPage() {
     : [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <Link to="/catalogue" className="text-sm text-blue-600 hover:underline mb-6 inline-block">
+        <Link to="/catalogue" className="text-sm text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-block">
           ← Torna al catalogo
         </Link>
 
         {/* Header */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 mb-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-gray-900">{etf.name}</h1>
-              <p className="text-sm text-gray-500 font-mono mt-1">{etf.isin} · {etf.ticker}</p>
-              <p className="text-sm text-gray-600 mt-2">Indice: {etf.index}</p>
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">{etf.name}</h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 font-mono mt-1">{etf.isin} · {etf.ticker}</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Indice: {etf.index}</p>
             </div>
             <div className="flex items-center gap-1">
               <Badge variant={riskColor}>SRI {etf.riskClass}/7</Badge>
@@ -146,8 +146,8 @@ export default function EtfDetailPage() {
         </div>
 
         {/* Performance */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">Performance storica</h2>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 mb-6">
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Performance storica</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
             <MetricBox label="CAGR 1 anno" value={formatPercent(etf.cagr1y)} highlight={(etf.cagr1y ?? 0) >= 0}
               help="Rendimento annuo composto nell'ultimo anno. Utile per il trend recente, ma troppo breve per valutare un ETF: un singolo anno può essere eccezionalmente buono o cattivo." />
@@ -167,8 +167,8 @@ export default function EtfDetailPage() {
               help="Rendimento extra rispetto al tasso privo di rischio, diviso per la volatilità. Misura la qualità del rendimento: >1 è buono, >2 è eccellente. Permette di confrontare ETF con volatilità diverse: un ETF con Sharpe più alto rende di più per unità di rischio assunto." />
           </div>
           {etf.trackingDifference != null && (
-            <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
-              Tracking difference: <span className="font-medium text-gray-700">{formatPercent(etf.trackingDifference, 2)}</span> annuo vs. indice
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-3 flex items-center gap-1">
+              Tracking difference: <span className="font-medium text-gray-700 dark:text-gray-300">{formatPercent(etf.trackingDifference, 2)}</span> annuo vs. indice
               <HelpTooltip content="Differenza tra il rendimento dell'ETF e quello dell'indice che replica. Diversa dal TER: include anche entrate da securities lending e inefficienze di replica. Un valore negativo (es. -0.05%) significa che l'ETF ha fatto meglio dell'indice, grazie al prestito titoli." />
             </p>
           )}
@@ -178,8 +178,8 @@ export default function EtfDetailPage() {
         {(sortedSectors.length > 0 || sortedGeo.length > 0) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {sortedSectors.length > 0 && (
-              <div className="bg-white border border-gray-200 rounded-xl p-6">
-                <h2 className="text-base font-semibold text-gray-900 mb-4">Composizione settoriale</h2>
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
+                <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Composizione settoriale</h2>
                 <div className="space-y-2.5">
                   {sortedSectors.map(([sector, weight]) => (
                     <WeightBar key={sector} label={sector} value={weight} />
@@ -188,8 +188,8 @@ export default function EtfDetailPage() {
               </div>
             )}
             {sortedGeo.length > 0 && (
-              <div className="bg-white border border-gray-200 rounded-xl p-6">
-                <h2 className="text-base font-semibold text-gray-900 mb-4">Esposizione geografica</h2>
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
+                <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Esposizione geografica</h2>
                 <div className="space-y-2.5">
                   {sortedGeo.map(([country, weight]) => (
                     <WeightBar key={country} label={country} value={weight} />
@@ -202,12 +202,12 @@ export default function EtfDetailPage() {
 
         {/* Holdings */}
         {etf.holdings && etf.holdings.length > 0 && (
-          <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
-            <h2 className="text-base font-semibold text-gray-900 mb-4">Principali posizioni</h2>
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 mb-6">
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Principali posizioni</h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-xs text-gray-500 border-b border-gray-100">
+                  <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-800">
                     <th className="pb-2 font-medium">Ticker</th>
                     <th className="pb-2 font-medium">Nome</th>
                     <th className="pb-2 font-medium text-right">Peso</th>
@@ -215,10 +215,10 @@ export default function EtfDetailPage() {
                 </thead>
                 <tbody>
                   {etf.holdings.map(h => (
-                    <tr key={h.ticker} className="border-b border-gray-50 last:border-0">
-                      <td className="py-2 font-mono text-gray-700">{h.ticker}</td>
-                      <td className="py-2 text-gray-800">{h.name}</td>
-                      <td className="py-2 text-right font-medium text-gray-900">{h.weight.toFixed(2)}%</td>
+                    <tr key={h.ticker} className="border-b border-gray-50 dark:border-gray-800 last:border-0">
+                      <td className="py-2 font-mono text-gray-700 dark:text-gray-300">{h.ticker}</td>
+                      <td className="py-2 text-gray-800 dark:text-gray-200">{h.name}</td>
+                      <td className="py-2 text-right font-medium text-gray-900 dark:text-white">{h.weight.toFixed(2)}%</td>
                     </tr>
                   ))}
                 </tbody>
@@ -228,53 +228,53 @@ export default function EtfDetailPage() {
         )}
 
         {/* Scheda tecnica */}
-        <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
-          <h2 className="text-base font-semibold text-gray-900 mb-4">Scheda tecnica</h2>
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 mb-6">
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-4">Scheda tecnica</h2>
           <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3 text-sm">
-            <div className="flex justify-between border-b border-gray-50 pb-2">
-              <dt className="text-gray-500 flex items-center">
+            <div className="flex justify-between border-b border-gray-50 dark:border-gray-800 pb-2">
+              <dt className="text-gray-500 dark:text-gray-400 flex items-center">
                 Data lancio
                 <HelpTooltip content="Data di creazione dell'ETF. Fondi con storia più lunga permettono di valutare il comportamento in diversi cicli di mercato (crisi 2008, COVID 2020, ecc.). ETF giovani (<3 anni) hanno dati storici insufficienti per valutazioni affidabili." />
               </dt>
-              <dd className="font-medium text-gray-900">{etf.inceptionDate}</dd>
+              <dd className="font-medium text-gray-900 dark:text-white">{etf.inceptionDate}</dd>
             </div>
-            <div className="flex justify-between border-b border-gray-50 pb-2">
-              <dt className="text-gray-500 flex items-center">
+            <div className="flex justify-between border-b border-gray-50 dark:border-gray-800 pb-2">
+              <dt className="text-gray-500 dark:text-gray-400 flex items-center">
                 Borsa
                 <HelpTooltip content="Borsa su cui è quotato l'ETF. Borsa Italiana (Milano) è la più conveniente per investitori italiani: evita costi di cambio valuta e la maggior parte dei broker italiani ha commissioni più basse rispetto a Xetra o Euronext." />
               </dt>
-              <dd className="font-medium text-gray-900">{etf.exchange}</dd>
+              <dd className="font-medium text-gray-900 dark:text-white">{etf.exchange}</dd>
             </div>
-            <div className="flex justify-between border-b border-gray-50 pb-2">
-              <dt className="text-gray-500 flex items-center">
+            <div className="flex justify-between border-b border-gray-50 dark:border-gray-800 pb-2">
+              <dt className="text-gray-500 dark:text-gray-400 flex items-center">
                 Replica
                 <HelpTooltip content="Fisica completa: compra tutti i titoli dell'indice (massima trasparenza, nessun rischio controparte). Campionamento: compra un sottoinsieme ottimizzato, usato su indici con migliaia di titoli. Sintetica: usa swap con una banca, può essere più efficiente ma introduce rischio controparte (limitato al 10% per legge UCITS)." />
               </dt>
-              <dd className="font-medium text-gray-900">{replicationLabel(etf.replicationMethod)}</dd>
+              <dd className="font-medium text-gray-900 dark:text-white">{replicationLabel(etf.replicationMethod)}</dd>
             </div>
-            <div className="flex justify-between border-b border-gray-50 pb-2">
-              <dt className="text-gray-500 flex items-center">
+            <div className="flex justify-between border-b border-gray-50 dark:border-gray-800 pb-2">
+              <dt className="text-gray-500 dark:text-gray-400 flex items-center">
                 Domicilio
                 <HelpTooltip content="Paese legale del fondo. IE (Irlanda) è preferibile per chi investe in ETF con esposizione USA: ritenuta dividendi USA al 15% vs 30% per fondi non-irlandesi. LU (Lussemburgo) è il secondo più comune. La scelta del domicilio impatta il rendimento netto reale." />
               </dt>
-              <dd className="font-medium text-gray-900">{etf.domicile}</dd>
+              <dd className="font-medium text-gray-900 dark:text-white">{etf.domicile}</dd>
             </div>
-            <div className="flex justify-between border-b border-gray-50 pb-2">
-              <dt className="text-gray-500 flex items-center">
+            <div className="flex justify-between border-b border-gray-50 dark:border-gray-800 pb-2">
+              <dt className="text-gray-500 dark:text-gray-400 flex items-center">
                 Copertura valutaria
                 <HelpTooltip content="EUR hedged: il rischio di cambio tra la valuta degli asset (es. USD) e l'EUR viene neutralizzato tramite contratti forward. Utile in periodi di USD debole, ma ha un costo (tipicamente 0.3–1% annuo). Non coperto: il rendimento include l'oscillazione del cambio, storicamente positivo per investitori EUR su asset USD nel lungo periodo." />
               </dt>
-              <dd className="font-medium text-gray-900">{etf.hedged ? 'EUR hedged' : 'Non coperto'}</dd>
+              <dd className="font-medium text-gray-900 dark:text-white">{etf.hedged ? 'EUR hedged' : 'Non coperto'}</dd>
             </div>
           </dl>
         </div>
 
         {/* KID Link */}
         {etf.kidUrl && (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between">
+          <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-xl p-4 flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-blue-900">Documento KID (KIID)</p>
-              <p className="text-xs text-blue-600 mt-0.5">Key Information Document, richiesto dalla normativa UE</p>
+              <p className="text-sm font-medium text-blue-900 dark:text-blue-200">Documento KID (KIID)</p>
+              <p className="text-xs text-blue-600 dark:text-blue-400 mt-0.5">Key Information Document, richiesto dalla normativa UE</p>
             </div>
             <a
               href={etf.kidUrl}

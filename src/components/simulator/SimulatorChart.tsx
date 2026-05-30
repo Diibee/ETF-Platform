@@ -41,8 +41,8 @@ interface CustomTooltipProps {
 function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!active || !payload || payload.length === 0) return null;
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-md px-4 py-3 text-sm">
-      <p className="font-semibold text-gray-700 mb-2">Anno {label}</p>
+    <div className="bg-white border border-gray-200 rounded-lg shadow-md px-4 py-3 text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
+      <p className="font-semibold text-gray-700 mb-2 dark:text-gray-300">Anno {label}</p>
       {payload.map(item => (
         <p key={item.name} style={{ color: item.color }} className="font-medium">
           {item.name}: {formatEur(item.value)}

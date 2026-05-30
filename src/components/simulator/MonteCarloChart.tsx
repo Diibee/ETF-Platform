@@ -40,11 +40,11 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   if (!row) return null;
   const p90 = row.p10 + row.mcBand;
   return (
-    <div className="bg-white border border-gray-200 rounded-lg shadow-md px-4 py-3 text-sm">
-      <p className="font-semibold text-gray-700 mb-2">Anno {label}</p>
+    <div className="bg-white border border-gray-200 rounded-lg shadow-md px-4 py-3 text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-gray-200">
+      <p className="font-semibold text-gray-700 mb-2 dark:text-gray-300">Anno {label}</p>
       <p className="text-orange-500 font-medium">Ottimistico (P90): {formatEur(p90)}</p>
       <p className="text-purple-600 font-medium">Mediano (P50): {formatEur(row.p50)}</p>
-      <p className="text-gray-500 font-medium">Pessimistico (P10): {formatEur(row.p10)}</p>
+      <p className="text-gray-500 font-medium dark:text-gray-400">Pessimistico (P10): {formatEur(row.p10)}</p>
     </div>
   );
 }
