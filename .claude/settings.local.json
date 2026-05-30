@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create *)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(npx create-vite@latest etf-temp --template react-ts)",
+      "PowerShell($src = \"C:\\\\Users\\\\Matteo\\\\Documents\\\\Progetti\\\\ETF-Platform\\\\etf-temp\"; $dst = \"C:\\\\Users\\\\Matteo\\\\Documents\\\\Progetti\\\\ETF-Platform\"; Get-ChildItem $src | ForEach-Object { Move-Item $_.FullName \"$dst\\\\$\\($_.Name\\)\" -Force }; Remove-Item $src -Recurse -Force; Get-ChildItem $dst)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /PID 33280 /F)",
+      "PowerShell(Stop-Process -Id 33280 -Force -ErrorAction SilentlyContinue)",
+      "Bash(node -e \"const d=require\\('./src/data/etfs.json'\\); console.log\\('Total:', d.length\\); console.log\\('With holdings:', d.filter\\(e=>e.holdings&&e.holdings.length\\).length\\); d.forEach\\(e=>console.log\\(e.ticker, e.assetClass, 'holdings:', e.holdings?.length||0\\)\\);\")",
+      "Bash(node -e \"const d=require\\('./src/data/etfs.json'\\); const e=d.find\\(x=>x.ticker==='CSPX'\\); console.log\\(JSON.stringify\\(e.holdings?.[0],null,2\\)\\);\")",
+      "Bash(gh --version)"
+    ]
+  }
+}
