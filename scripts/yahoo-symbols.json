@@ -1,0 +1,17 @@
+{
+  "_comment": "Mappa ISIN -> simbolo Yahoo Finance usato per scaricare lo storico prezzi. Suffissi comuni: .MI = Borsa Italiana (Milano), .DE = Xetra, .L = London, .AS = Amsterdam, .PA = Parigi. Se un simbolo restituisce errore o dati vuoti, lo script salta quell'ETF e mantiene i valori esistenti: correggi qui il simbolo e rilancia. Preferisci una quotazione con storico lungo; la valuta del listato determina la valuta dei rendimenti calcolati.",
+  "IE00B4L5Y983": "SWDA.MI",
+  "IE00B3RBWM25": "VWRL.MI",
+  "IE00BK5BQT80": "VWCE.MI",
+  "IE00B52SFT06": "EIMI.MI",
+  "LU0908500753": "LCWD.MI",
+  "IE00B4L5YX21": "CSSPX.MI",
+  "IE00B3F81R35": "IMEU.MI",
+  "IE00B14X4T88": "IBGX.MI",
+  "IE00B3F81409": "IEAA.MI",
+  "LU1650490474": "GAGG.MI",
+  "IE00B3VVMM84": "SGLD.MI",
+  "IE00B579F325": "ICOM.L",
+  "IE00B5L01S80": "IWDP.MI",
+  "LU1812091194": "EPRA.MI"
+}
