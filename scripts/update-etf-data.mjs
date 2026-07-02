@@ -64,12 +64,19 @@ function computeMetrics(quotes) {
   const cagr5y = cagrPct(priceYearsAgo(quotes, 5), last.adjclose, 5);
   const cagr10y = cagrPct(priceYearsAgo(quotes, 10), last.adjclose, 10);
 
-  // Volatilità: dev. std dei log-rendimenti giornalieri, annualizzata
+  // Volatilità: dev. std dei log-rendimenti giornalieri, annualizzata.
+  // Filtriamo i rendimenti giornalieri impossibili (|log| > 0.4, cioè oltre ~±49% in
+  // un giorno): sono quasi sempre tick sporchi o frazionamenti non corretti su Yahoo
+  // che gonfierebbero artificialmente la volatilità.
+  const OUTLIER = 0.4;
   const logRets = [];
   for (let i = 1; i < quotes.length; i++) {
     const p0 = quotes[i - 1].adjclose;
     const p1 = quotes[i].adjclose;
-    if (p0 > 0 && p1 > 0) logRets.push(Math.log(p1 / p0));
+    if (p0 > 0 && p1 > 0) {
+      const r = Math.log(p1 / p0);
+      if (Math.abs(r) < OUTLIER) logRets.push(r);
+    }
   }
   const mean = logRets.reduce((s, r) => s + r, 0) / logRets.length;
   const variance = logRets.reduce((s, r) => s + (r - mean) ** 2, 0) / (logRets.length - 1);
