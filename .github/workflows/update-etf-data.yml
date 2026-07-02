@@ -18,10 +18,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
-      - run: npm ci
+      # npm install (non npm ci): riconcilia il lock cross-platform senza fallire
+      # se il package-lock è stato generato su un OS diverso (Windows -> Linux runner).
+      - run: npm install
 
       - name: Aggiorna metriche ETF
         run: node scripts/update-etf-data.mjs
