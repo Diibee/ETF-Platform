@@ -23,7 +23,7 @@
     "cagr10y": 12.8,
     "volatility": 16,
     "maxDrawdown": -33.6,
-    "sharpeRatio": 0.59,
+    "sharpeRatio": 0.61,
     "trackingDifference": -0.01,
     "sectorWeights": {
       "Technology": 24.5,
@@ -275,7 +275,7 @@
     "cagr10y": 8.5,
     "volatility": 19.2,
     "maxDrawdown": -32.5,
-    "sharpeRatio": 0.32,
+    "sharpeRatio": 0.33,
     "trackingDifference": 0.05,
     "sectorWeights": {
       "Technology": 21.3,
@@ -412,7 +412,7 @@
     "cagr10y": 14.7,
     "volatility": 16.8,
     "maxDrawdown": -33.6,
-    "sharpeRatio": 0.71,
+    "sharpeRatio": 0.72,
     "trackingDifference": -0.02,
     "sectorWeights": {
       "Technology": 31.2,
@@ -488,7 +488,7 @@
     "cagr10y": 9.7,
     "volatility": 16.3,
     "maxDrawdown": -35.2,
-    "sharpeRatio": 0.35,
+    "sharpeRatio": 0.37,
     "trackingDifference": 0.03,
     "sectorWeights": {
       "Financial Services": 18.2,
@@ -783,7 +783,7 @@
     "cagr10y": 2.3,
     "volatility": 16.7,
     "maxDrawdown": -42.4,
-    "sharpeRatio": 0.08,
+    "sharpeRatio": 0.1,
     "trackingDifference": 0.18,
     "sectorWeights": {
       "Diversified REITs": 22.4,
@@ -941,7 +941,7 @@
     "cagr10y": 20.2,
     "volatility": 20.5,
     "maxDrawdown": -31.1,
-    "sharpeRatio": 0.82
+    "sharpeRatio": 0.83
   },
   {
     "id": "ishares-nasdaq100-acc",
@@ -968,7 +968,7 @@
     "cagr10y": 20.2,
     "volatility": 20.4,
     "maxDrawdown": -31.3,
-    "sharpeRatio": 0.82
+    "sharpeRatio": 0.83
   },
   {
     "id": "vanguard-sp500-dist",
@@ -1073,7 +1073,7 @@
     "cagr10y": 12.8,
     "volatility": 16,
     "maxDrawdown": -33.6,
-    "sharpeRatio": 0.59
+    "sharpeRatio": 0.61
   },
   {
     "id": "ishares-msci-acwi-acc",
@@ -1150,7 +1150,7 @@
     "cagr10y": 9.7,
     "volatility": 16.5,
     "maxDrawdown": -35.7,
-    "sharpeRatio": 0.35
+    "sharpeRatio": 0.37
   },
   {
     "id": "ishares-global-clean-energy",
@@ -1177,7 +1177,7 @@
     "cagr10y": 8.1,
     "volatility": 25.9,
     "maxDrawdown": -64.2,
-    "sharpeRatio": 0.17
+    "sharpeRatio": 0.18
   },
   {
     "id": "ishares-automation-robotics",
@@ -1230,7 +1230,7 @@
     "cagr10y": 3,
     "volatility": 6.7,
     "maxDrawdown": -24.7,
-    "sharpeRatio": 0.15
+    "sharpeRatio": 0.16
   },
   {
     "id": "ishares-global-aggregate-hedged",
@@ -1335,6 +1335,6 @@
     "cagr10y": 14.7,
     "volatility": 16.8,
     "maxDrawdown": -33.6,
-    "sharpeRatio": 0.7
+    "sharpeRatio": 0.72
   }
 ]
