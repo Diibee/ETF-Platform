@@ -23,7 +23,7 @@
     "cagr10y": 12.8,
     "volatility": 16,
     "maxDrawdown": -33.6,
-    "sharpeRatio": 0.6,
+    "sharpeRatio": 0.59,
     "trackingDifference": -0.01,
     "sectorWeights": {
       "Technology": 24.5,
@@ -708,7 +708,7 @@
     "cagr10y": 12,
     "volatility": 14.6,
     "maxDrawdown": -22.7,
-    "sharpeRatio": 0.73,
+    "sharpeRatio": 0.72,
     "trackingDifference": 0.12,
     "sectorWeights": {
       "Gold": 100
@@ -941,7 +941,7 @@
     "cagr10y": 20.3,
     "volatility": 20.5,
     "maxDrawdown": -31.1,
-    "sharpeRatio": 0.82
+    "sharpeRatio": 0.81
   },
   {
     "id": "ishares-nasdaq100-acc",
@@ -1073,7 +1073,7 @@
     "cagr10y": 12.7,
     "volatility": 16,
     "maxDrawdown": -33.6,
-    "sharpeRatio": 0.6
+    "sharpeRatio": 0.59
   },
   {
     "id": "ishares-msci-acwi-acc",
