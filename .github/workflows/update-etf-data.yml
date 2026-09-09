@@ -1,6 +1,7 @@
 name: Aggiornamento dati ETF
 
-# Esegue lo scraper delle metriche una volta al giorno e committa il JSON aggiornato.
+# Esegue gli updater una volta al giorno e committa il JSON aggiornato.
+# 1) metriche di prezzo da Yahoo Finance 2) fondamentali da justETF.
 # Il push fa scattare il redeploy automatico su Vercel con i dati freschi.
 on:
   schedule:
@@ -27,6 +28,9 @@ jobs:
 
       - name: Aggiorna metriche ETF
         run: node scripts/update-etf-data.mjs
+
+      - name: Aggiorna fondamentali da justETF
+        run: node scripts/scrape-etf-data.cjs
 
       - name: Commit e push se ci sono modifiche
         run: |

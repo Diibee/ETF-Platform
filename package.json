@@ -8,10 +8,13 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "update-data": "node scripts/update-etf-data.mjs"
+    "update-data": "node scripts/update-etf-data.mjs",
+    "scrape-data": "node scripts/scrape-etf-data.cjs"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.3.3",
+    "axios": "^1.20.0",
+    "cheerio": "^1.2.0",
     "lucide-react": "^1.43.0",
     "motion": "^13.2.0",
     "next": "^16.3.4",
