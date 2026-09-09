@@ -1,3 +1,5 @@
+'use client';
+
 import type { AssetClass, DividendPolicy, Domicile } from '../../types/etf';
 
 export interface FilterState {

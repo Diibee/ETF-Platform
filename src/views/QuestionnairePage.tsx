@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import type { ETF, UserProfile } from '../types/etf';
 import etfsData from '../data/etfs.json';

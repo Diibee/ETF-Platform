@@ -1,14 +1,554 @@
 @import "tailwindcss";
 
+/* Tailwind v4 derives its scan root from this file's location, which would
+   cover only `src/`. The App Router routes live in `app/`, so any class used
+   solely there (skip link, not-found page) would be silently dropped from the
+   generated CSS. Declare both roots explicitly. */
+@source "../app";
+@source "../src";
+
 @custom-variant dark (&:where(.dark, .dark *));
 
-body {
-  margin: 0;
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ============================================================================
+   DESIGN TOKENS — ETF Lab
+   Style: Data-Dense Dashboard. Palette: navy/blue data + amber highlights.
+   Every colour is declared here on :root (light) and overridden in .dark, then
+   exposed to Tailwind through @theme inline. Components must never hardcode hex.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* — Surfaces ------------------------------------------------------------ */
+  --bg: #f5f7fa;
+  --bg-grid: rgb(11 18 32 / 0.045);
+  --surface: #ffffff;
+  --surface-2: #f1f4f9;
+  --surface-3: #e6ebf3;
+  --overlay: rgb(11 18 32 / 0.4);
+
+  /* — Lines --------------------------------------------------------------- */
+  --border: #e2e8f0;
+  --border-strong: #c9d3e0;
+
+  /* — Text ---------------------------------------------------------------- */
+  --fg: #0b1220;
+  --fg-muted: #4e5d75;
+  --fg-subtle: #55637a; /* 4.7:1 on --surface-3, the darkest light surface */
+
+  /* — Brand --------------------------------------------------------------- */
+  --brand: #2c5fe8;
+  --brand-hover: #2350cd;
+  --brand-fg: #ffffff;
+  --brand-soft: #e9eefe;
+  --brand-soft-fg: #1c44b5;
+
+  /* — Accent (amber, used for emphasis + warnings) ------------------------ */
+  --accent: #a06505; /* 4.8:1 on --surface */
+  --accent-soft: #fdf2df;
+  --accent-soft-fg: #8a5504;
+
+  /* — Semantic feedback --------------------------------------------------- */
+  --positive: #0f8a55;
+  --positive-soft: #e3f6ec;
+  --positive-soft-fg: #0a6b41;
+  --negative: #cf2440;
+  --negative-soft: #fdeaee;
+  --negative-soft-fg: #a51a30;
+  --info: #0b6fa4;
+  --info-soft: #e4f2fa;
+  --info-soft-fg: #08557d;
+
+  /* — Data series (simulator) -------------------------------------------- */
+  --data-gross: #2c5fe8;
+  --data-net: #0f8a55;
+  --data-real: #7c4ddc;
+  --data-invested: #8794aa;
+  --data-band: #7c4ddc;
+  --data-p90: #d97706;
+
+  /* — Asset classes (4 categorical hues, distinguishable, colour-blind safe
+       ordering: blue → teal → amber → violet) ----------------------------- */
+  --asset-equity: #2c5fe8;
+  --asset-bonds: #0d8f96;
+  --asset-commodities: #c07d07;
+  --asset-real-estate: #7c4ddc;
+
+  /* — Correlation / heat scale (diverging: teal → neutral → rose) --------- */
+  --heat-neg-2: #0d8f96;
+  --heat-neg-1: #7fcbcf;
+  --heat-0: #e6ebf3;
+  --heat-pos-1: #f2c17a;
+  --heat-pos-2: #e08a5c;
+  --heat-pos-3: #cf2440;
+
+  /* — Risk scale (SRI 1–7) ----------------------------------------------- */
+  --risk-low: #0f8a55;
+  --risk-mid: #b06f06;
+  --risk-high: #cf2440;
+
+  /* — Elevation ---------------------------------------------------------- */
+  --elev-xs: 0 1px 2px rgb(11 18 32 / 0.05);
+  --elev-sm: 0 1px 3px rgb(11 18 32 / 0.07), 0 1px 2px rgb(11 18 32 / 0.04);
+  --elev-md: 0 4px 12px rgb(11 18 32 / 0.08), 0 1px 3px rgb(11 18 32 / 0.04);
+  --elev-lg: 0 12px 32px rgb(11 18 32 / 0.12), 0 2px 8px rgb(11 18 32 / 0.06);
+
+  /* — Chart chrome ------------------------------------------------------- */
+  --chart-grid: #e2e8f0;
+  --chart-axis: #6b7a93;
 }
 
-#root {
-  min-height: 100svh;
+.dark {
+  color-scheme: dark;
+
+  --bg: #080b12;
+  --bg-grid: rgb(255 255 255 / 0.035);
+  --surface: #10161f;
+  --surface-2: #171f2b;
+  --surface-3: #1f2937;
+  --overlay: rgb(3 5 9 / 0.65);
+
+  --border: #232d3d;
+  --border-strong: #34415a;
+
+  --fg: #eef2f8;
+  --fg-muted: #9caac0;
+  --fg-subtle: #8b9ab0; /* 5.1:1 on dark:bg-gray-800 (was #798aa3 at 4.2:1) */
+
+  --brand: #5b87ff;
+  --brand-hover: #7ba0ff;
+  --brand-fg: #06101f;
+  --brand-soft: #16233d;
+  --brand-soft-fg: #9db8ff;
+
+  --accent: #f0aa3c;
+  --accent-soft: #2b2113;
+  --accent-soft-fg: #f5c777;
+
+  --positive: #34d399;
+  --positive-soft: #0e2b21;
+  --positive-soft-fg: #6ee7b7;
+  --negative: #fd8b99; /* 5.5:1 on --surface-2 (was #fb7185 at 4.6:1) */
+  --negative-soft: #2e1219;
+  --negative-soft-fg: #fda4af;
+  --info: #38bdf8;
+  --info-soft: #0c2533;
+  --info-soft-fg: #7dd3fc;
+
+  --data-gross: #5b87ff;
+  --data-net: #34d399;
+  --data-real: #a78bfa;
+  --data-invested: #64748b;
+  --data-band: #a78bfa;
+  --data-p90: #f0aa3c;
+
+  --asset-equity: #5b87ff;
+  --asset-bonds: #2dd4bf;
+  --asset-commodities: #f0aa3c;
+  --asset-real-estate: #a78bfa;
+
+  --heat-neg-2: #2dd4bf;
+  --heat-neg-1: #14747a;
+  --heat-0: #1f2937;
+  --heat-pos-1: #8a5f13;
+  --heat-pos-2: #b4562c;
+  --heat-pos-3: #e04057;
+
+  --risk-low: #34d399;
+  --risk-mid: #f0aa3c;
+  --risk-high: #fb7185;
+
+  --elev-xs: 0 1px 2px rgb(0 0 0 / 0.3);
+  --elev-sm: 0 1px 3px rgb(0 0 0 / 0.4), 0 1px 2px rgb(0 0 0 / 0.3);
+  --elev-md: 0 4px 12px rgb(0 0 0 / 0.45), 0 1px 3px rgb(0 0 0 / 0.3);
+  --elev-lg: 0 12px 32px rgb(0 0 0 / 0.55), 0 2px 8px rgb(0 0 0 / 0.35);
+
+  --chart-grid: #232d3d;
+  --chart-axis: #798aa3;
+}
+
+@theme inline {
+  /* Typography */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Colours */
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-overlay: var(--overlay);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-fg: var(--brand-fg);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-soft-fg: var(--brand-soft-fg);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-soft-fg: var(--accent-soft-fg);
+
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+  --color-positive-soft-fg: var(--positive-soft-fg);
+  --color-negative: var(--negative);
+  --color-negative-soft: var(--negative-soft);
+  --color-negative-soft-fg: var(--negative-soft-fg);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-info-soft-fg: var(--info-soft-fg);
+
+  --color-equity: var(--asset-equity);
+  --color-bonds: var(--asset-bonds);
+  --color-commodities: var(--asset-commodities);
+  --color-real-estate: var(--asset-real-estate);
+
+  --color-risk-low: var(--risk-low);
+  --color-risk-mid: var(--risk-mid);
+  --color-risk-high: var(--risk-high);
+
+  /* Radii — slightly tighter than default for a dense, instrument-like feel */
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+  --radius-2xl: 1.125rem;
+
+  /* Shadows */
+  --shadow-xs: var(--elev-xs);
+  --shadow-sm: var(--elev-sm);
+  --shadow-md: var(--elev-md);
+  --shadow-lg: var(--elev-lg);
+
+  /* Density 7/10 — dashboard spacing scale (8 → 32px) */
+  --spacing: 0.25rem;
+
+  /* Motion */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --animate-fade-up: fade-up 0.32s var(--ease-out-quart) both;
+  --animate-fade-in: fade-in 0.2s ease-out both;
+  --animate-pop-in: pop-in 0.28s var(--ease-out-quart) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ============================================================================
+   BASE
+   ========================================================================== */
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: 0.9375rem; /* 15px — dense but above the 12px floor */
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100svh;
+  }
+
+  /* Figures always align in columns. */
+  .tnum,
+  th,
+  td,
+  input[type="number"] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* One consistent, always-visible focus ring across the app. */
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--brand-soft);
+    color: var(--brand-soft-fg);
+  }
+
+  /* Range inputs: themed track + 20px thumb inside a 44px tall hit area. */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 1.25rem;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 0.375rem;
+    border-radius: 999px;
+    background: var(--surface-3);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 1.125rem;
+    width: 1.125rem;
+    margin-top: -0.375rem;
+    border-radius: 999px;
+    background: var(--brand);
+    border: 2px solid var(--surface);
+    box-shadow: var(--elev-sm);
+    transition: transform 0.15s var(--ease-out-quart);
+  }
+
+  input[type="range"]:hover::-webkit-slider-thumb {
+    transform: scale(1.12);
+  }
+
+  input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(0.96);
+  }
+
+  input[type="range"]::-moz-range-track {
+    height: 0.375rem;
+    border-radius: 999px;
+    background: var(--surface-3);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    height: 1.125rem;
+    width: 1.125rem;
+    border-radius: 999px;
+    background: var(--brand);
+    border: 2px solid var(--surface);
+    box-shadow: var(--elev-sm);
+  }
+
+  /* Discreet scrollbars that follow the theme. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+@layer utilities {
+  /* Subtle dotted grid used behind hero/empty areas. */
+  .bg-dotgrid {
+    background-image: radial-gradient(var(--bg-grid) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .stagger > * {
+    animation: var(--animate-fade-up);
+    animation-delay: calc(var(--i, 0) * 45ms);
+  }
+
+  /* Anything that must never wrap mid-label (chips, badges, tickers). */
+  .nowrap {
+    white-space: nowrap;
+  }
+}
+
+/* Motion is decoration: strip it entirely when the user asks for that. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================================
+   LANDING LAYER — spacious marketing scale
+   The dashboard above runs at density 7/10 (15px body, 4px spacing unit).
+   Marketing pages need density 3/10, so the landing gets its own fluid type
+   ramp and section rhythm layered on top of the same colour tokens. Nothing
+   here changes an app-surface value.
+   ========================================================================== */
+
+:root {
+  /* — Fluid type ramp (min 375px → max 1440px, no media queries needed) ---- */
+  --text-display: clamp(2.5rem, 1.6rem + 3.9vw, 4.75rem);
+  --text-h1: clamp(2rem, 1.4rem + 2.6vw, 3.25rem);
+  --text-h2: clamp(1.625rem, 1.25rem + 1.6vw, 2.375rem);
+  --text-h3: clamp(1.125rem, 1.02rem + 0.44vw, 1.375rem);
+  --text-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --text-eyebrow: 0.8125rem;
+
+  /* — Section rhythm ------------------------------------------------------ */
+  --section-y: clamp(4rem, 2.5rem + 6.5vw, 8rem);
+  --section-gap: clamp(2.5rem, 1.8rem + 3vw, 4.5rem);
+  --gutter: clamp(1.25rem, 0.9rem + 1.5vw, 2rem);
+  --measure: 42rem;
+
+  /* — Landing-only surface treatments ------------------------------------ */
+  --glass: rgb(255 255 255 / 0.88);
+  --glass-border: rgb(11 18 32 / 0.08);
+  --halo: rgb(44 95 232 / 0.14);
+  --halo-2: rgb(176 111 6 / 0.10);
+  --hairline: rgb(11 18 32 / 0.06);
+}
+
+.dark {
+  --glass: rgb(16 22 31 / 0.88);
+  --glass-border: rgb(255 255 255 / 0.08);
+  --halo: rgb(91 135 255 / 0.18);
+  --halo-2: rgb(240 170 60 / 0.10);
+  --hairline: rgb(255 255 255 / 0.07);
+}
+
+@theme inline {
+  --text-display: var(--text-display);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.035em;
+  --text-display--font-weight: 700;
+
+  --text-h1: var(--text-h1);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.03em;
+  --text-h1--font-weight: 700;
+
+  --text-h2: var(--text-h2);
+  --text-h2--line-height: 1.15;
+  --text-h2--letter-spacing: -0.022em;
+  --text-h2--font-weight: 650;
+
+  --text-h3: var(--text-h3);
+  --text-h3--line-height: 1.35;
+  --text-h3--letter-spacing: -0.012em;
+  --text-h3--font-weight: 600;
+
+  --text-lead: var(--text-lead);
+  --text-lead--line-height: 1.6;
+
+  --text-eyebrow: var(--text-eyebrow);
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.08em;
+  --text-eyebrow--font-weight: 600;
+
+  --color-glass: var(--glass);
+  --color-glass-border: var(--glass-border);
+  --color-hairline: var(--hairline);
+}
+
+@layer utilities {
+  /* Vertical rhythm for a marketing section. */
+  .section-y {
+    padding-block: var(--section-y);
+  }
+
+  /* The single shared content column — every landing section uses this. */
+  .shell {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Optimal reading measure for prose blocks. */
+  .measure {
+    max-width: var(--measure);
+  }
+
+  /* Soft radial brand halo behind hero / CTA bands. */
+  .halo {
+    background:
+      radial-gradient(60% 55% at 50% 0%, var(--halo), transparent 70%),
+      radial-gradient(40% 40% at 85% 15%, var(--halo-2), transparent 70%);
+  }
+
+  /* Frosted card used by the navbar and hero panel. */
+  .glass {
+    background-color: var(--glass);
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+  }
+
+  /* Top hairline that reads as a light edge in both themes. */
+  .edge-top {
+    box-shadow: inset 0 1px 0 0 var(--hairline);
+  }
+
+  /* Gradient text for a single emphasised headline span. */
+  .text-gradient {
+    background: linear-gradient(135deg, var(--fg) 25%, var(--brand) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Windows High Contrast strips background-image, which would leave
+     `color: transparent` text completely invisible. Fall back to a solid
+     system colour there. */
+  @media (forced-colors: active) {
+    .text-gradient {
+      background: none;
+      color: CanvasText;
+      forced-color-adjust: none;
+    }
+  }
 }

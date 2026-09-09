@@ -93,7 +93,7 @@ export function CorrelationHeatmap({ portfolio }: CorrelationHeatmapProps) {
         </p>
       )}
 
-      <p className="text-xs text-gray-400 dark:text-gray-500">
+      <p className="text-xs text-fg-subtle">
         Correlazione stimata euristicamente da asset class e sovrapposizione dei titoli sottostanti.
         Non si basa su serie storiche dei rendimenti.
       </p>

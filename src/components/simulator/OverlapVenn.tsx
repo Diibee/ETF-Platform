@@ -41,7 +41,7 @@ export function OverlapVenn({ a, b, size = 240 }: OverlapVennProps) {
     <div className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center dark:bg-gray-900 dark:border-gray-700">
       <div className="flex items-baseline gap-2 mb-2 text-sm">
         <span className="font-semibold" style={{ color: aFill }}>{a.ticker}</span>
-        <span className="text-gray-400 dark:text-gray-500">↔</span>
+        <span className="text-fg-subtle">↔</span>
         <span className="font-semibold" style={{ color: bFill }}>{b.ticker}</span>
       </div>
 
@@ -95,7 +95,7 @@ export function OverlapVenn({ a, b, size = 240 }: OverlapVennProps) {
 
       <p className="text-xs text-gray-500 mt-1 text-center dark:text-gray-400">
         {overlap == null ? (
-          <span className="text-gray-400 dark:text-gray-500">Dati holdings non disponibili per uno dei due ETF.</span>
+          <span className="text-fg-subtle">Dati holdings non disponibili per uno dei due ETF.</span>
         ) : overlap === 0 ? (
           <span className="text-green-600 font-medium dark:text-green-400">Nessuna sovrapposizione. Diversificazione massima.</span>
         ) : overlap < 15 ? (

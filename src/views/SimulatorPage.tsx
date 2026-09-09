@@ -1,20 +1,55 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+'use client';
+
+import { useMemo, useState } from 'react';
+import { useSimulatorHandoff } from '@/context/SimulatorHandoffContext';
 import type { ETF, PortfolioEntry, SimulationInput } from '../types/etf';
 import etfsData from '../data/etfs.json';
 import { runSimulation, derivedAnnualReturn, derivedVolatility, computeInvestedByYear } from '../utils/compound';
 import { computePortfolioMetrics } from '../utils/portfolio';
 import { SimulatorForm, type SimulatorFormState } from '../components/simulator/SimulatorForm';
-import { SimulatorChart } from '../components/simulator/SimulatorChart';
-import { MonteCarloChart, type McRow } from '../components/simulator/MonteCarloChart';
+import dynamic from 'next/dynamic';
+import type { McRow } from '../components/simulator/MonteCarloChart';
 import { CorrelationHeatmap } from '../components/simulator/CorrelationHeatmap';
 import { LookThroughTable } from '../components/simulator/LookThroughTable';
 import { OverlapDiagrams } from '../components/simulator/OverlapVenn';
 import { PortfolioAnalysis } from '../components/simulator/PortfolioAnalysis';
-import { WeightDriftChart } from '../components/simulator/WeightDriftChart';
+
 import { ReturnDisclaimer } from '../components/common/ReturnDisclaimer';
 
 const etfs = etfsData as unknown as ETF[];
+
+/* ---------------------------------------------------------------------------
+   Recharts sizes itself by measuring the DOM through `ResponsiveContainer`,
+   so on the server it renders an empty chart while the client renders axes and
+   legend — a React hydration mismatch (error #418). Loading the three chart
+   components on the client only removes the mismatch, and giving each loader a
+   placeholder of the chart's exact height keeps cumulative layout shift at 0.
+   ------------------------------------------------------------------------- */
+
+function ChartSkeleton({ height }: { height: number }) {
+  return (
+    <div
+      style={{ height }}
+      aria-hidden="true"
+      className="w-full animate-pulse rounded-xl bg-surface-2"
+    />
+  );
+}
+
+const SimulatorChart = dynamic(
+  () => import('../components/simulator/SimulatorChart').then(m => m.SimulatorChart),
+  { ssr: false, loading: () => <ChartSkeleton height={320} /> },
+);
+
+const MonteCarloChart = dynamic(
+  () => import('../components/simulator/MonteCarloChart').then(m => m.MonteCarloChart),
+  { ssr: false, loading: () => <ChartSkeleton height={280} /> },
+);
+
+const WeightDriftChart = dynamic(
+  () => import('../components/simulator/WeightDriftChart').then(m => m.WeightDriftChart),
+  { ssr: false, loading: () => <ChartSkeleton height={260} /> },
+);
 
 const DEFAULT_FORM: SimulatorFormState = {
   initialDeposit: 10000,
@@ -47,29 +82,25 @@ function SummaryCard({ label, value, sub, accent }: {
     <div className={`border rounded-xl p-4 ${border}`}>
       <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{label}</p>
       <p className={`text-2xl font-bold ${text}`}>{value}</p>
-      {sub && <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-fg-subtle mt-1">{sub}</p>}
     </div>
   );
 }
 
-interface LocationStateHydration {
-  portfolio?: PortfolioEntry[];
-  initialDeposit?: number;
-  periodicContribution?: number;
-  contributionFrequency?: SimulationInput['contributionFrequency'];
-  years?: number;
-}
-
 export default function SimulatorPage() {
-  const location = useLocation();
-  const [form, setForm] = useState<SimulatorFormState>(DEFAULT_FORM);
+  const { consumeHandoff } = useSimulatorHandoff();
 
-  // Hydrate from React Router state (e.g. when navigated from a recommendation set)
-  useEffect(() => {
-    const incoming = location.state as LocationStateHydration | null;
-    if (!incoming) return;
-    setForm(prev => ({
-      ...prev,
+  // Consumed in the state initialiser rather than an effect: the questionnaire
+  // parks the payload *before* navigating, so it is already available on first
+  // render. That avoids the extra render pass a setState-in-effect would cause,
+  // and it is SSR-safe because a handoff can only exist after a client-side
+  // navigation — on a cold load of /simulator there is nothing to consume, so
+  // server and client both start from DEFAULT_FORM.
+  const [form, setForm] = useState<SimulatorFormState>(() => {
+    const incoming = consumeHandoff();
+    if (!incoming) return DEFAULT_FORM;
+    return {
+      ...DEFAULT_FORM,
       ...(incoming.portfolio && incoming.portfolio.length > 0
         ? { portfolioEntries: incoming.portfolio.map(p => ({ isin: p.etf.isin, weight: p.weight })) }
         : {}),
@@ -77,8 +108,8 @@ export default function SimulatorPage() {
       ...(typeof incoming.periodicContribution === 'number' ? { periodicContribution: incoming.periodicContribution } : {}),
       ...(incoming.contributionFrequency ? { contributionFrequency: incoming.contributionFrequency } : {}),
       ...(typeof incoming.years === 'number' ? { years: Math.max(1, Math.min(40, incoming.years)) } : {}),
-    }));
-  }, [location.state]);
+    };
+  });
 
   const { input, annualReturn, volatility, result, chartData, mcChartData, totalInvested, finalPortfolio, portfolioMetrics } = useMemo(() => {
     const portfolio: PortfolioEntry[] = form.portfolioEntries
@@ -175,7 +206,7 @@ export default function SimulatorPage() {
                   Rendimento stimato:{' '}
                   <span className="font-bold text-blue-600 dark:text-blue-400">{annualReturn.toFixed(2)}% annuo</span>
                 </span>
-                <span className="text-xs text-gray-400 dark:text-gray-500">
+                <span className="text-xs text-fg-subtle">
                   Volatilità: <span className="font-medium text-gray-600 dark:text-gray-400">{volatility.toFixed(1)}%</span>
                   {' '}· {form.years} anni
                   {finalPortfolio.length > 0 && <> · {finalPortfolio.length} ETF</>}
@@ -219,7 +250,7 @@ export default function SimulatorPage() {
                 <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
                   <div>
                     <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Matrice di correlazione</h3>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                    <p className="text-xs text-fg-subtle mt-0.5">
                       Visualizza la diversificazione tra i singoli ETF. Valori vicini a 1 indicano ridondanza.
                     </p>
                   </div>
@@ -230,7 +261,7 @@ export default function SimulatorPage() {
                 <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
                   <div>
                     <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Sovrapposizione tra ETF</h3>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                    <p className="text-xs text-fg-subtle mt-0.5">
                       Quanto i titoli sottostanti dei singoli ETF si sovrappongono. Più si toccano, più stai comprando le stesse aziende due volte.
                     </p>
                   </div>
@@ -241,7 +272,7 @@ export default function SimulatorPage() {
                 <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
                   <div>
                     <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Titoli sottostanti (look-through)</h3>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                    <p className="text-xs text-fg-subtle mt-0.5">
                       Aggregazione delle posizioni dei singoli ETF, ponderate per il peso nel portafoglio.
                     </p>
                   </div>
@@ -254,7 +285,7 @@ export default function SimulatorPage() {
                     <div className="flex items-baseline justify-between gap-3">
                       <div>
                         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Drift dei pesi nel tempo</h3>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                        <p className="text-xs text-fg-subtle mt-0.5">
                           {form.rebalancing === 'annual'
                             ? 'Ribilanciamento annuale attivo: i pesi tornano sempre al target.'
                             : 'Nessun ribilanciamento: gli ETF crescono indipendentemente, i pesi si spostano.'}
@@ -285,7 +316,7 @@ export default function SimulatorPage() {
                               <span className="text-gray-500 dark:text-gray-400">
                                 {targetPct.toFixed(1)}% → <span className="font-semibold text-gray-900 dark:text-white">{finalPct.toFixed(1)}%</span>
                                 {' '}
-                                <span className={drift > 1 ? 'text-red-600' : drift < -1 ? 'text-blue-500 dark:text-blue-400' : 'text-gray-400 dark:text-gray-500'}>
+                                <span className={drift > 1 ? 'text-negative' : drift < -1 ? 'text-blue-500 dark:text-blue-400' : 'text-fg-subtle'}>
                                   ({drift >= 0 ? '+' : ''}{drift.toFixed(1)})
                                 </span>
                               </span>
@@ -301,7 +332,7 @@ export default function SimulatorPage() {
                 <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-5 py-4 space-y-3">
                   <div>
                     <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Cosa ci dice il portafoglio</h3>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                    <p className="text-xs text-fg-subtle mt-0.5">
                       Lettura automatica delle metriche: cosa sta funzionando, cosa vale la pena rivedere.
                     </p>
                   </div>
@@ -330,13 +361,13 @@ export default function SimulatorPage() {
                 </div>
                 <div>
                   <p className="text-gray-500 dark:text-gray-400 text-xs">Guadagno netto</p>
-                  <p className={`font-semibold ${gain >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600'}`}>
+                  <p className={`font-semibold ${gain >= 0 ? 'text-positive' : 'text-negative'}`}>
                     {gain >= 0 ? '+' : ''}{formatEur(gain)}
                   </p>
                 </div>
                 <div>
                   <p className="text-gray-500 dark:text-gray-400 text-xs">Carico fiscale totale</p>
-                  <p className="font-semibold text-red-600">−{formatEur(taxDrag)}</p>
+                  <p className="font-semibold text-negative">−{formatEur(taxDrag)}</p>
                 </div>
                 <div>
                   <p className="text-gray-500 dark:text-gray-400 text-xs">Efficienza netta</p>
@@ -357,7 +388,7 @@ export default function SimulatorPage() {
             <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 space-y-4">
               <div>
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Monte Carlo · 1.000 simulazioni</h3>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                <p className="text-xs text-fg-subtle mt-0.5">
                   Distribuzione dei possibili valori netti a scadenza basata su volatilità storica (log-normale).
                 </p>
               </div>
@@ -365,12 +396,12 @@ export default function SimulatorPage() {
                 <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Scenario pessimistico (P10)</p>
                   <p className="text-lg font-bold text-gray-700 dark:text-gray-300">{formatEur(result.monteCarlo.finalP10)}</p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">10% dei casi peggiore</p>
+                  <p className="text-xs text-fg-subtle mt-0.5">10% dei casi peggiore</p>
                 </div>
                 <div className="border border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
                   <p className="text-xs text-purple-600 dark:text-purple-400 mb-1">Scenario mediano (P50)</p>
                   <p className="text-lg font-bold text-purple-700 dark:text-purple-400">{formatEur(result.monteCarlo.finalP50)}</p>
-                  <p className="text-xs text-purple-400 dark:text-purple-500 mt-0.5">Risultato più probabile</p>
+                  <p className="text-xs text-[var(--data-real)] mt-0.5">Risultato più probabile</p>
                 </div>
                 <div className="border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
                   <p className="text-xs text-orange-600 dark:text-orange-400 mb-1">Scenario ottimistico (P90)</p>

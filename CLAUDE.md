@@ -7,16 +7,42 @@ Not a regulated financial advisory service — see Disclaimer section.
 
 ## Tech Stack
 
-- **Frontend**: React 18 + TypeScript + Vite
-- **Styling**: Tailwind CSS
+- **Framework**: Next.js 16 (App Router) + React 19 + TypeScript
+- **Styling**: Tailwind CSS v4 (CSS-first config, `@theme inline` tokens)
+- **Animation**: Motion (`motion/react`) — via the `<Reveal>` primitive only
 - **Charts**: Recharts (compound curves, Monte Carlo fan charts, correlation heatmap)
-- **Routing**: React Router v6
-- **State**: React Context + useReducer (no Redux for now)
+- **Routing**: Next.js file-based routing in `app/`
+- **State**: React Context (no Redux for now)
+- **Fonts**: `next/font` self-hosted IBM Plex Sans + Mono
 - **Data (MVP 1–2)**: static JSON files in `src/data/`
 - **Data (MVP 3+)**: scraping pipeline from justETF + issuer CSV downloads (holdings, KID)
 - **Backend (MVP 3+)**: Node.js + Express, PostgreSQL
 
-No backend is required for MVP 1 and 2. Keep it purely frontend.
+Everything renders statically at build time — no server runtime is required for
+MVP 1 and 2. Deployed on Vercel, which detects the framework from `vercel.json`.
+
+### Rules that follow from the App Router
+
+- **Server Components are the default.** Add `'use client'` only for state,
+  event handlers, or browser APIs.
+- **Never put `Math.random()`, `Date.now()` or `new Date()` in render.** Both
+  the server and the client render the tree, so a non-deterministic value is a
+  hydration mismatch. `src/utils/montecarlo.ts` uses a seeded PRNG for this
+  reason — keep it seeded.
+- **Recharts cannot be server-rendered** (`ResponsiveContainer` measures the
+  DOM). Load chart components with `next/dynamic` + `ssr: false` and give the
+  loader a placeholder of the chart's exact height so CLS stays at 0.
+- **Never animate above-the-fold content from `opacity: 0`.** It delays the
+  Largest Contentful Paint by the full animation duration. `<Reveal>` is for
+  below-the-fold sections only.
+- **Tailwind's scan roots are declared explicitly** via `@source` in
+  `src/index.css`. A class used only in a directory that is not listed will be
+  silently dropped from the generated CSS.
+
+### Folder note
+
+Page components live in `src/views/`, not `src/pages/` — Next.js treats a
+`src/pages/` directory as the legacy Pages Router and refuses to build.
 
 ---
 
@@ -25,12 +51,23 @@ No backend is required for MVP 1 and 2. Keep it purely frontend.
 ```
 etf-platform/
 ├── CLAUDE.md
+├── next.config.ts
+├── vercel.json              # pins framework: nextjs
+├── app/                     # App Router: routes, layouts, metadata
+│   ├── layout.tsx           # fonts, providers, theme script
+│   ├── page.tsx             # landing page
+│   ├── catalogue/
+│   │   ├── page.tsx
+│   │   └── [isin]/page.tsx  # 30 pages pre-rendered via generateStaticParams
+│   ├── simulator/page.tsx
+│   └── questionnaire/page.tsx
 ├── src/
 │   ├── components/
 │   │   ├── catalogue/        # ETF list, filters, detail card
 │   │   ├── simulator/        # Compound calculator, Monte Carlo chart
 │   │   ├── portfolio/        # Overlap, correlation matrix, look-through
 │   │   ├── questionnaire/    # Profiling flow + recommendation output
+│   │   ├── landing/          # Landing page sections + Reveal primitive
 │   │   └── common/           # Button, Card, Badge, Modal, Disclaimer
 │   ├── data/
 │   │   └── etfs.json         # Static ETF records (seed with 15–20 ETFs)
@@ -42,8 +79,8 @@ etf-platform/
 │   │   └── correlation.ts    # Pearson correlation matrix
 │   ├── types/
 │   │   └── etf.ts            # All TypeScript interfaces (source of truth)
-│   ├── App.tsx
-│   └── main.tsx
+│   ├── views/                # Page-level components rendered by app/ routes
+│   └── index.css             # Design tokens (dashboard + landing layers)
 └── public/
 ```
 
@@ -346,6 +383,9 @@ Cover all four asset classes and both dividend policies:
 ## What NOT to Do
 
 - Do NOT hardcode tax rates in components — always import from `tax.ts`.
+- Do NOT hardcode colours (`text-red-600`, `text-gray-400`, hex values) — use
+  the semantic tokens in `src/index.css`. Raw Tailwind palette colours have
+  repeatedly failed the 4.5:1 contrast floor in dark mode.
 - Do NOT show gross-only returns without a net alternative.
 - Do NOT build MVP 3 features before MVP 1 is complete.
 - Do NOT add a backend before it is explicitly requested.

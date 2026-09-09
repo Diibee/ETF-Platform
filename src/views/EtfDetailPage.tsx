@@ -1,4 +1,6 @@
-import { useParams, Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import type { ETF } from '../types/etf';
 import etfsData from '../data/etfs.json';
 import { Badge } from '../components/common/Badge';
@@ -42,15 +44,14 @@ function WeightBar({ label, value }: { label: string; value: number }) {
   );
 }
 
-export default function EtfDetailPage() {
-  const { isin } = useParams<{ isin: string }>();
+export default function EtfDetailPage({ isin }: { isin: string }) {
   const etf = etfs.find(e => e.isin === isin);
 
   if (!etf) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col items-center justify-center gap-4">
         <p className="text-xl text-gray-600 dark:text-gray-400">ETF non trovato</p>
-        <Link to="/catalogue" className="text-blue-600 dark:text-blue-400 hover:underline text-sm">
+        <Link href="/catalogue" className="text-blue-600 dark:text-blue-400 hover:underline text-sm">
           ← Torna al catalogo
         </Link>
       </div>
@@ -70,7 +71,7 @@ export default function EtfDetailPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <Link to="/catalogue" className="text-sm text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-block">
+        <Link href="/catalogue" className="text-sm text-blue-600 dark:text-blue-400 hover:underline mb-6 inline-block">
           ← Torna al catalogo
         </Link>
 

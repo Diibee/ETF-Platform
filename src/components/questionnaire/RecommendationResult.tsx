@@ -1,8 +1,12 @@
+'use client';
+
 import type { UserProfile, ETF, PortfolioEntry } from '../../types/etf';
 import type { RecommendationOutput, PortfolioSet } from '../../utils/recommendation';
 import { Badge } from '../common/Badge';
 import { FriendsDisclaimer } from '../common/FriendsDisclaimer';
-import { Link, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useSimulatorHandoff } from '@/context/SimulatorHandoffContext';
 
 interface RecommendationResultProps {
   profile: UserProfile;
@@ -46,7 +50,7 @@ function PortfolioSetCard({ set, onSimulate }: { set: PortfolioSet; onSimulate: 
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${accent.chip} ${accent.chipText}`}>
               {set.label}
             </span>
-            <span className="text-xs text-gray-400 dark:text-gray-500">{set.portfolio.length} ETF</span>
+            <span className="text-xs text-fg-subtle">{set.portfolio.length} ETF</span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400">{set.description}</p>
         </div>
@@ -135,18 +139,18 @@ function PortfolioSetCard({ set, onSimulate }: { set: PortfolioSet; onSimulate: 
 }
 
 export function RecommendationResult({ profile, recommendation, onReset }: RecommendationResultProps) {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const { setHandoff } = useSimulatorHandoff();
 
   function handleSimulate(portfolio: PortfolioEntry[]) {
-    navigate('/simulator', {
-      state: {
-        portfolio,
-        initialDeposit: profile.initialCapital,
-        periodicContribution: profile.monthlyContribution,
-        contributionFrequency: 'monthly' as const,
-        years: profile.horizon,
-      },
+    setHandoff({
+      portfolio,
+      initialDeposit: profile.initialCapital,
+      periodicContribution: profile.monthlyContribution,
+      contributionFrequency: 'monthly' as const,
+      years: profile.horizon,
     });
+    router.push('/simulator');
   }
 
   const totalAlloc = recommendation.allocation;
@@ -218,10 +222,10 @@ export function RecommendationResult({ profile, recommendation, onReset }: Recom
                   <span className={`w-1 self-stretch rounded-full flex-shrink-0 ${ASSET_COLORS[etf.assetClass]}`} />
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{etf.name}</p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500">{etf.ticker} · TER {etf.ter}% · {ASSET_LABELS[etf.assetClass]}</p>
+                    <p className="text-xs text-fg-subtle">{etf.ticker} · TER {etf.ter}% · {ASSET_LABELS[etf.assetClass]}</p>
                   </div>
                 </div>
-                <Link to={`/catalogue/${etf.isin}`} className="text-xs text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap flex-shrink-0">
+                <Link href={`/catalogue/${etf.isin}`} className="text-xs text-blue-600 dark:text-blue-400 hover:underline whitespace-nowrap flex-shrink-0">
                   Dettagli →
                 </Link>
               </div>

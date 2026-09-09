@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import type { PortfolioEntry } from '../../types/etf';
 import { lookThroughHoldings } from '../../utils/overlap';
@@ -14,7 +16,7 @@ export function LookThroughTable({ portfolio }: LookThroughTableProps) {
 
   if (holdings.length === 0) {
     return (
-      <p className="text-xs text-gray-400 dark:text-gray-500">
+      <p className="text-xs text-fg-subtle">
         Nessun dato di holdings disponibile per gli ETF del portafoglio.
       </p>
     );
@@ -41,7 +43,7 @@ export function LookThroughTable({ portfolio }: LookThroughTableProps) {
       <p className="text-xs text-gray-500 dark:text-gray-400">
         {holdings.length} titoli sottostanti distinti · {totalCovered.toFixed(1)}% del portafoglio coperto
         {totalCovered < 99 && (
-          <span className="text-gray-400 dark:text-gray-500">
+          <span className="text-fg-subtle">
             {' '}(la quota restante è in ETF senza dati di holdings, es. bonds, commodities)
           </span>
         )}
@@ -62,7 +64,7 @@ export function LookThroughTable({ portfolio }: LookThroughTableProps) {
               const sources = sourceByKey.get(h.key) ?? [];
               return (
                 <tr key={h.key} className="border-b border-gray-50 last:border-0 dark:border-gray-800">
-                  <td className="py-1.5 text-gray-400 dark:text-gray-500">{i + 1}</td>
+                  <td className="py-1.5 text-fg-subtle">{i + 1}</td>
                   <td className="py-1.5 text-gray-800 dark:text-gray-200">{h.name}</td>
                   <td className="py-1.5 text-gray-500 font-mono dark:text-gray-400">{h.ticker}</td>
                   <td className="py-1.5 text-gray-500 dark:text-gray-400">{sources.join(', ')}</td>

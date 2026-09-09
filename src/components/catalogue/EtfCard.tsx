@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import type { ETF } from '../../types/etf';
 import { Badge } from '../common/Badge';
 import {
@@ -20,7 +20,7 @@ export function EtfCard({ etf }: EtfCardProps) {
 
   return (
     <Link
-      to={`/catalogue/${etf.isin}`}
+      href={`/catalogue/${etf.isin}`}
       className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all duration-150 group"
     >
       <div className="flex items-start justify-between gap-2 mb-3">
@@ -54,7 +54,7 @@ export function EtfCard({ etf }: EtfCardProps) {
         </div>
         <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg py-1.5 px-2">
           <p className="text-xs text-gray-500 dark:text-gray-400">CAGR 5a</p>
-          <p className={`font-semibold text-sm ${etf.cagr5y != null && etf.cagr5y >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+          <p className={`font-semibold text-sm ${etf.cagr5y != null && etf.cagr5y >= 0 ? 'text-positive' : 'text-negative'}`}>
             {formatPercent(etf.cagr5y)}
           </p>
         </div>
