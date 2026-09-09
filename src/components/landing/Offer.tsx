@@ -2,13 +2,14 @@ import { Check, Circle } from 'lucide-react';
 import { SectionHeading, CtaLink, Panel } from './primitives';
 import { Reveal } from './Reveal';
 import { CTA, CTA_REASSURANCE } from './cta';
+import { CATALOGUE, MONTE_CARLO_RUNS_LABEL } from './stats';
 import { ReturnDisclaimer } from '@/components/common/ReturnDisclaimer';
 import { FriendsDisclaimer } from '@/components/common/FriendsDisclaimer';
 
 const INCLUDED = [
-  'Catalogo completo di 30 ETF con schede dettagliate',
+  `Catalogo completo di ${CATALOGUE.count} ETF con schede dettagliate`,
   'Simulatore interesse composto lordo, netto e reale',
-  'Fan chart Monte Carlo su 1.000 simulazioni',
+  `Fan chart Monte Carlo su ${MONTE_CARLO_RUNS_LABEL} simulazioni`,
   'Modello fiscale italiano: capital gain, bollo, mancata compensazione',
   'Sovrapposizione, correlazione e look-through di portafoglio',
   'Questionario di profilazione e ripartizione suggerita',

@@ -1,28 +1,17 @@
 import { RefreshCw, FileCode2, Scale, ShieldCheck } from 'lucide-react';
-import type { ETF } from '@/types/etf';
-import etfsData from '@/data/etfs.json';
 import { TAX_RATE_STANDARD, TAX_RATE_GOV_BONDS, BOLLO_RATE } from '@/utils/tax';
 import { SectionHeading, Panel } from './primitives';
 import { Reveal } from './Reveal';
+import { CATALOGUE } from './stats';
 
-const etfs = etfsData as unknown as ETF[];
-
-/* Derived from the dataset at build time, so these figures can never drift
-   away from what the catalogue actually contains. */
-const TOTAL = etfs.length;
-const IE_DOMICILED = etfs.filter(e => e.domicile === 'IE').length;
-const WITH_HOLDINGS = etfs.filter(e => e.holdings && e.holdings.length > 0).length;
-const ASSET_CLASSES = new Set(etfs.map(e => e.assetClass)).size;
-const TERS = etfs.map(e => e.ter).sort((a, b) => a - b);
-const EXCHANGES = [...new Set(etfs.map(e => e.exchange))];
 
 const pct = (n: number) => `${(n * 100).toFixed(n * 100 % 1 === 0 ? 0 : 1).replace('.', ',')}%`;
 
 const METRICS = [
-  { value: String(TOTAL), label: 'ETF nel catalogo', sub: `su ${EXCHANGES.length} borse: ${EXCHANGES.join(', ')}` },
-  { value: String(ASSET_CLASSES), label: 'classi di attivo', sub: 'azionario, obbligazionario, materie prime, immobiliare' },
-  { value: `${IE_DOMICILED}/${TOTAL}`, label: 'domiciliati in Irlanda', sub: 'ritenuta ridotta sui dividendi USA' },
-  { value: `${TERS[0].toString().replace('.', ',')}%`, label: 'TER più basso rilevato', sub: `fino a ${TERS[TERS.length - 1].toString().replace('.', ',')}% sul più caro` },
+  { value: String(CATALOGUE.count), label: 'ETF nel catalogo', sub: `su ${CATALOGUE.exchanges.length} borse: ${CATALOGUE.exchanges.join(', ')}` },
+  { value: String(CATALOGUE.assetClasses), label: 'classi di attivo', sub: 'azionario, obbligazionario, materie prime, immobiliare' },
+  { value: `${CATALOGUE.ieDomiciled}/${CATALOGUE.count}`, label: 'domiciliati in Irlanda', sub: 'ritenuta ridotta sui dividendi USA' },
+  { value: `${CATALOGUE.terMin}%`, label: 'TER più basso rilevato', sub: `fino a ${CATALOGUE.terMax}% sul più caro` },
 ];
 
 const GUARANTEES = [
@@ -40,7 +29,7 @@ const GUARANTEES = [
   {
     icon: FileCode2,
     title: 'Composizione verificabile',
-    body: `${WITH_HOLDINGS} ETF riportano le posizioni sottostanti, il che rende sovrapposizione e look-through calcolabili invece che stimate. Dove il dato manca, la schermata lo dichiara.`,
+    body: `${CATALOGUE.withHoldings} ETF riportano le posizioni sottostanti, il che rende sovrapposizione e look-through calcolabili invece che stimate. Dove il dato manca, la schermata lo dichiara.`,
   },
   {
     icon: ShieldCheck,

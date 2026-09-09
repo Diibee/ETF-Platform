@@ -1,14 +1,14 @@
 import { Table2, TrendingUp, Waves, Landmark, GitCompareArrows, UserCog } from 'lucide-react';
 import { SectionHeading, Panel } from './primitives';
 import { Reveal } from './Reveal';
+import { CATALOGUE, MONTE_CARLO_RUNS_LABEL } from './stats';
 
 const FEATURES = [
   {
     icon: Table2,
     title: 'Catalogo filtrabile',
-    body:
-      'Trenta ETF acquistabili su Borsa Italiana e Xetra, filtrabili per classe di attivo, TER, domicilio, politica dividendi e classe di rischio SRI.',
-    meta: '30 strumenti · TER da 0,03% a 0,65%',
+    body: `${CATALOGUE.count} ETF acquistabili su ${CATALOGUE.exchanges.join(', ')}, filtrabili per classe di attivo, TER, domicilio, politica dividendi e classe di rischio SRI.`,
+    meta: `${CATALOGUE.count} strumenti · TER da ${CATALOGUE.terMin}% a ${CATALOGUE.terMax}%`,
   },
   {
     icon: TrendingUp,
@@ -21,7 +21,7 @@ const FEATURES = [
     icon: Waves,
     title: 'Monte Carlo',
     body:
-      'Mille simulazioni su distribuzione log-normale restituiscono lo scenario sfortunato, mediano e fortunato invece di un singolo numero rassicurante.',
+      `${MONTE_CARLO_RUNS_LABEL} simulazioni su distribuzione log-normale restituiscono lo scenario sfortunato, mediano e fortunato invece di un singolo numero rassicurante.`,
     meta: 'Percentili p10 · p50 · p90',
   },
   {

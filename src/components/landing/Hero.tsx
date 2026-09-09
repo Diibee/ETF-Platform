@@ -2,11 +2,12 @@ import { CtaLink, Eyebrow } from './primitives';
 import { Reveal } from './Reveal';
 import { HeroChart } from './HeroChart';
 import { CTA, CTA_REASSURANCE } from './cta';
+import { CATALOGUE, MONTE_CARLO_RUNS_LABEL } from './stats';
 
 const TRUST = [
-  { value: '30', label: 'ETF nel catalogo' },
-  { value: '4', label: 'classi di attivo' },
-  { value: '1.000', label: 'simulazioni Monte Carlo' },
+  { value: String(CATALOGUE.count), label: 'ETF nel catalogo' },
+  { value: String(CATALOGUE.assetClasses), label: 'classi di attivo' },
+  { value: MONTE_CARLO_RUNS_LABEL, label: 'simulazioni Monte Carlo' },
   { value: '26% + 0,2%', label: 'capital gain e bollo' },
 ];
 
