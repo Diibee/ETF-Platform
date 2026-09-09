@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { cn } from '@/lib/cn';
+import { SoftBlurIn } from '@/components/motion';
 
 /* ---------------------------------------------------------------------------
    Landing UI kit. Server components only — no state, no handlers, so none of
@@ -87,6 +88,11 @@ export function Eyebrow({ children, className }: { children: React.ReactNode; cl
  * The lead is always left-aligned below `sm` regardless: centred body copy
  * running four or five lines on a 375px screen is ragged on both edges and
  * measurably slower to read.
+ *
+ * A string title gets the per-character blur reveal; a `ReactNode` title is
+ * rendered as-is, because `SoftBlurIn` has to split real text. Every section
+ * that uses this component is below the fold, which is the condition that
+ * makes an `opacity: 0` entrance safe here and not on the hero.
  */
 export function SectionHeading({
   eyebrow,
@@ -112,7 +118,9 @@ export function SectionHeading({
       )}
     >
       <Eyebrow>{eyebrow}</Eyebrow>
-      <h2 className="measure-wide text-h2 text-balance text-fg">{title}</h2>
+      <h2 className="measure-wide text-h2 text-balance text-fg">
+        {typeof title === 'string' ? <SoftBlurIn>{title}</SoftBlurIn> : title}
+      </h2>
       {lead && (
         <p
           className={cn(

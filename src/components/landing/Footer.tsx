@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Logo } from '@/components/common/Logo';
 import { CtaLink, CtaArrow } from './primitives';
-import { Reveal, StaggerGroup, StaggerItem } from '@/components/motion';
+import { Reveal, StaggerGroup, StaggerItem, SoftBlurIn } from '@/components/motion';
 import { CTA } from './cta';
 
 const COLUMNS = [
@@ -32,11 +32,12 @@ export function Footer() {
       {/* Closing CTA band — the page's last conversion point. */}
       <div className="halo border-b border-border">
         <div className="shell flex flex-col items-center gap-6 py-[var(--section-y)] text-center">
-          <Reveal>
-            <h2 className="text-h2 measure text-balance text-fg">
-              Guarda quanto resta dopo le imposte, prima di investire
-            </h2>
-          </Reveal>
+          {/* Not wrapped in a Reveal: SoftBlurIn brings its own trigger, and
+              nesting the two would fade the block in while the characters were
+              still un-blurring. */}
+          <h2 className="text-h2 measure text-balance text-fg">
+            <SoftBlurIn>Guarda quanto resta dopo le imposte, prima di investire</SoftBlurIn>
+          </h2>
           <Reveal delay={1}>
             <p className="measure text-lead text-pretty text-fg-muted">
               Nessuna registrazione. Inserisci importo, durata e portafoglio: la proiezione
