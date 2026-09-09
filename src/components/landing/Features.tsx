@@ -14,7 +14,7 @@ const FEATURES = [
     icon: TrendingUp,
     title: 'Simulatore lordo, netto e reale',
     body:
-      'Interesse composto con versamenti periodici e tre curve sempre affiancate: valore lordo, netto dopo imposte e reale al netto dell inflazione.',
+      'Interesse composto con versamenti periodici e tre curve sempre affiancate: valore lordo, netto dopo imposte e reale al netto dell’inflazione.',
     meta: 'Anno per anno, fino a 40 anni',
   },
   {
@@ -54,12 +54,13 @@ export function Features() {
         <SectionHeading
           eyebrow="Funzioni"
           title="Sei strumenti, un unico modello di calcolo"
-          lead="Ogni funzione lavora sugli stessi dati e sulle stesse regole fiscali, così i numeri non cambiano passando da una schermata all altra."
+          lead="Ogni funzione lavora sugli stessi dati e sulle stesse regole fiscali, così i numeri non cambiano passando da una schermata all’altra."
         />
 
-        <ul className="grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, title, body, meta }, i) => (
-            <Reveal as="li" key={title} delay={i % 3} className="flex">
+        <Reveal>
+          <ul className="grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-2 lg:grid-cols-3">
+            {FEATURES.map(({ icon: Icon, title, body, meta }) => (
+              <li key={title} className="flex">
               <Panel className="flex w-full flex-col gap-4 hover:border-border-strong hover:shadow-md">
                 <span
                   aria-hidden="true"
@@ -75,9 +76,10 @@ export function Features() {
                   {meta}
                 </p>
               </Panel>
-            </Reveal>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   );

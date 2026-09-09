@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Logo } from '@/components/common/Logo';
 import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { cn } from '@/lib/cn';
+import { CTA } from './cta';
 
 const SECTIONS = [
   { href: '#problema', label: 'Il problema' },
@@ -88,7 +89,7 @@ export function LandingNav() {
               <li key={s.href}>
                 <a
                   href={s.href}
-                  aria-current={active === s.href ? 'true' : undefined}
+                  aria-current={active === s.href ? 'location' : undefined}
                   className={cn(
                     'inline-flex min-h-9 cursor-pointer items-center rounded-lg px-3 text-sm font-medium',
                     'transition-colors duration-200',
@@ -102,13 +103,13 @@ export function LandingNav() {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
           <Link
-            href="/simulator"
+            href={CTA.simulator.href}
             className="hidden min-h-10 cursor-pointer items-center rounded-xl bg-brand px-4 text-sm font-semibold text-brand-fg shadow-sm transition-colors duration-200 hover:bg-brand-hover sm:inline-flex"
           >
-            Apri il simulatore
+            {CTA.simulator.label}
           </Link>
           <button
             type="button"
@@ -145,11 +146,11 @@ export function LandingNav() {
             ))}
             <li className="mt-2 px-2 pb-2">
               <Link
-                href="/simulator"
+                href={CTA.simulator.href}
                 onClick={() => setMenuOpen(false)}
                 className="flex min-h-11 w-full cursor-pointer items-center justify-center rounded-xl bg-brand px-4 font-semibold text-brand-fg"
               >
-                Apri il simulatore
+                {CTA.simulator.label}
               </Link>
             </li>
           </ul>

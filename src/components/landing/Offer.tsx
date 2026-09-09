@@ -1,6 +1,7 @@
 import { Check, Circle } from 'lucide-react';
 import { SectionHeading, CtaLink, Panel } from './primitives';
 import { Reveal } from './Reveal';
+import { CTA, CTA_REASSURANCE } from './cta';
 import { ReturnDisclaimer } from '@/components/common/ReturnDisclaimer';
 import { FriendsDisclaimer } from '@/components/common/FriendsDisclaimer';
 
@@ -26,19 +27,19 @@ export function Offer() {
     <section id="accesso" className="section-y scroll-mt-20 border-y border-border bg-surface-2/40">
       <div className="shell flex flex-col gap-[var(--section-gap)]">
         <SectionHeading
+          align="center"
           eyebrow="Accesso"
           title="Tutto incluso, senza costi"
-          lead="ETF Lab nasce come strumento personale di analisi. Non c è un piano a pagamento, non c è un funnel: quello che vedi è tutto quello che c è."
+          lead="ETF Lab nasce come strumento personale di analisi. Non c’è un piano a pagamento, non c’è un funnel: quello che vedi è tutto quello che c’è."
         />
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.25fr_1fr]">
           <Reveal className="flex">
-            <Panel className="relative flex w-full flex-col gap-6 border-brand/35 p-7 shadow-md">
-              <span className="absolute -top-3 left-7 rounded-full bg-brand px-3 py-1 text-[0.6875rem] font-semibold tracking-wide text-brand-fg uppercase">
-                Disponibile ora
-              </span>
-
-              <div className="flex flex-col gap-1">
+            <Panel className="flex w-full flex-col gap-6 border-brand/35 p-6 shadow-md">
+              <div className="flex flex-col gap-2">
+                <span className="w-fit rounded-full bg-brand px-3 py-1 text-[0.6875rem] font-semibold tracking-wide text-brand-fg uppercase">
+                  Disponibile ora
+                </span>
                 <h3 className="text-h3 text-fg">Accesso completo</h3>
                 <p className="flex items-baseline gap-2">
                   <span className="text-display leading-none text-fg">€0</span>
@@ -56,11 +57,14 @@ export function Offer() {
               </ul>
 
               <div className="flex flex-col gap-3 sm:flex-row">
-                <CtaLink href="/simulator">Inizia dalla simulazione</CtaLink>
-                <CtaLink href="/questionnaire" variant="secondary">
-                  Parti dal profilo
+                <CtaLink href={CTA.simulator.href} className="w-full sm:w-auto">
+                  {CTA.simulator.label}
+                </CtaLink>
+                <CtaLink href={CTA.profile.href} variant="secondary" className="w-full sm:w-auto">
+                  {CTA.profile.label}
                 </CtaLink>
               </div>
+              <p className="text-xs text-fg-subtle">{CTA_REASSURANCE}</p>
             </Panel>
           </Reveal>
 

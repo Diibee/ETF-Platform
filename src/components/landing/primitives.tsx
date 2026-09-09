@@ -8,7 +8,7 @@ import { cn } from '@/lib/cn';
    ------------------------------------------------------------------------- */
 
 const BUTTON_BASE =
-  'inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl px-5 ' +
+  'inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl px-6 ' +
   'text-[0.9375rem] font-semibold tracking-tight transition-[background-color,border-color,color,box-shadow] ' +
   'duration-200 ease-[var(--ease-out-quart)]';
 
@@ -44,14 +44,22 @@ export function Eyebrow({ children, className }: { children: React.ReactNode; cl
 }
 
 /**
- * Shared section header. Keeps the eyebrow → h2 → lead hierarchy identical in
- * every section, which is most of what makes the page read as one system.
+ * Shared section header.
+ *
+ * `align` defaults to `start`, not `center`. Six consecutive centred
+ * eyebrow → h2 → lead blocks gave the page no rhythm and is one of the more
+ * recognisable stock layouts; alternating alignment between sections restores
+ * a sense of pacing while keeping the type hierarchy identical.
+ *
+ * The lead is always left-aligned below `sm` regardless: centred body copy
+ * running four or five lines on a 375px screen is ragged on both edges and
+ * measurably slower to read.
  */
 export function SectionHeading({
   eyebrow,
   title,
   lead,
-  align = 'center',
+  align = 'start',
   className,
 }: {
   eyebrow: string;
@@ -60,18 +68,25 @@ export function SectionHeading({
   align?: 'center' | 'start';
   className?: string;
 }) {
+  const centred = align === 'center';
+
   return (
     <div
       className={cn(
         'flex flex-col gap-3',
-        align === 'center' ? 'items-center text-center' : 'items-start text-left',
+        centred ? 'items-start sm:items-center sm:text-center' : 'items-start',
         className,
       )}
     >
       <Eyebrow>{eyebrow}</Eyebrow>
-      <h2 className="text-h2 text-balance text-fg">{title}</h2>
+      <h2 className="measure-wide text-h2 text-balance text-fg">{title}</h2>
       {lead && (
-        <p className={cn('measure text-lead text-pretty text-fg-muted', align === 'center' && 'mx-auto')}>
+        <p
+          className={cn(
+            'measure text-lead text-pretty text-fg-muted',
+            centred && 'sm:mx-auto',
+          )}
+        >
           {lead}
         </p>
       )}

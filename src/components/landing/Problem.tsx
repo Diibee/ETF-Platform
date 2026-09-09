@@ -7,7 +7,7 @@ const PROBLEMS = [
     icon: Receipt,
     title: 'Il lordo è ovunque, il netto quasi mai',
     body:
-      'Le schede prodotto mostrano il rendimento dell indice. Capital gain al 26%, imposta di bollo annuale e inflazione restano fuori dal grafico, ma non dal tuo conto.',
+      'Le schede prodotto mostrano il rendimento dell’indice. Capital gain al 26%, imposta di bollo annuale e inflazione restano fuori dal grafico, ma non dal tuo conto.',
   },
   {
     icon: Ban,
@@ -34,27 +34,30 @@ export function Problem() {
     <section id="problema" className="section-y scroll-mt-20 border-b border-border bg-surface-2/40">
       <div className="shell flex flex-col gap-[var(--section-gap)]">
         <SectionHeading
+          align="center"
           eyebrow="Il problema"
           title="Scegliere un ETF in Italia è un esercizio di dati mancanti"
           lead="Quattro ostacoli ricorrenti che separano il rendimento pubblicizzato da quello che resta davvero in tasca."
         />
 
-        <ul className="grid list-none grid-cols-1 gap-x-8 gap-y-8 p-0 md:grid-cols-2">
-          {PROBLEMS.map(({ icon: Icon, title, body }, i) => (
-            <Reveal as="li" key={title} delay={i} className="flex gap-4">
+        <Reveal>
+          <ul className="grid list-none grid-cols-1 gap-x-8 gap-y-8 p-0 md:grid-cols-2">
+            {PROBLEMS.map(({ icon: Icon, title, body }) => (
+              <li key={title} className="flex gap-4">
               <span
                 aria-hidden="true"
                 className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-accent shadow-xs"
               >
                 <Icon size={19} strokeWidth={2} />
               </span>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-2">
                 <h3 className="text-h3 text-fg">{title}</h3>
                 <p className="text-pretty text-fg-muted">{body}</p>
               </div>
-            </Reveal>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   );

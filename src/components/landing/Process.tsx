@@ -1,4 +1,5 @@
 import { SectionHeading, CtaLink } from './primitives';
+import { CTA } from './cta';
 import { Reveal } from './Reveal';
 
 const STEPS = [
@@ -7,8 +8,8 @@ const STEPS = [
     title: 'Definisci il profilo',
     body:
       'Otto domande su età, orizzonte, obiettivo, tolleranza al rischio ed esperienza. Nessun dato identificativo.',
-    href: '/questionnaire',
-    cta: 'Compila il profilo',
+    href: CTA.profile.href,
+    cta: CTA.profile.label,
   },
   {
     n: '02',
@@ -21,16 +22,16 @@ const STEPS = [
     title: 'Confronta gli strumenti',
     body:
       'Per ogni classe filtri il catalogo su TER, domicilio, politica dividendi e liquidità, con la scheda completa di ogni ETF a fianco.',
-    href: '/catalogue',
-    cta: 'Apri il catalogo',
+    href: CTA.catalogue.href,
+    cta: CTA.catalogue.label,
   },
   {
     n: '04',
     title: 'Simula e verifica',
     body:
       'Proiezione lordo, netto e reale, fan chart Monte Carlo, sovrapposizione e correlazione fra gli strumenti scelti.',
-    href: '/simulator',
-    cta: 'Apri il simulatore',
+    href: CTA.simulator.href,
+    cta: CTA.simulator.label,
   },
 ];
 
@@ -44,9 +45,10 @@ export function Process() {
           lead="Ogni passaggio è indipendente: puoi partire dal catalogo se sai già cosa cercare, o dal simulatore se hai già un portafoglio."
         />
 
-        <ol className="grid list-none grid-cols-1 gap-x-8 gap-y-10 p-0 md:grid-cols-2 lg:grid-cols-4">
+        <Reveal>
+          <ol className="grid list-none grid-cols-1 gap-x-8 gap-y-8 p-0 md:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
-            <Reveal as="li" key={s.n} delay={i} className="relative flex flex-col gap-3">
+            <li key={s.n} className="relative flex flex-col gap-3">
               {/* Connector rail: drawn only between steps, desktop only. */}
               {i < STEPS.length - 1 && (
                 <span
@@ -67,9 +69,10 @@ export function Process() {
                   </svg>
                 </CtaLink>
               )}
-            </Reveal>
+            </li>
           ))}
-        </ol>
+          </ol>
+        </Reveal>
       </div>
     </section>
   );

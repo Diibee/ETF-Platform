@@ -59,7 +59,11 @@ export default function Home() {
 
       <LandingNav />
 
-      <main id="contenuto">
+      {/* tabIndex={-1} is what makes the skip link actually work: without it the
+          browser scrolls to <main> but leaves keyboard focus in the nav, so the
+          next Tab lands back on the menu — the exact thing the link exists to
+          avoid. Automated audits do not catch this. */}
+      <main id="contenuto" tabIndex={-1} className="focus:outline-none">
         <Hero />
         <Problem />
         <Features />

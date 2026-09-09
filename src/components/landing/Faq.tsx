@@ -47,10 +47,9 @@ export function Faq() {
           lead="Su cosa fa lo strumento, da dove prende i dati e — soprattutto — cosa non è."
         />
 
-        <div className="measure mx-auto w-full">
-          {FAQS.map((f, i) => (
-            <Reveal key={f.q} delay={Math.min(i, 3)}>
-              <details className="group border-b border-border">
+        <Reveal className="measure mx-auto w-full">
+          {FAQS.map(f => (
+            <details key={f.q} className="group border-b border-border">
                 <summary className="flex cursor-pointer list-none items-start justify-between gap-4 py-5 text-left [&::-webkit-details-marker]:hidden">
                   <h3 className="text-[1.0625rem] font-semibold tracking-tight text-fg transition-colors duration-200 group-hover:text-brand">
                     {f.q}
@@ -65,10 +64,9 @@ export function Faq() {
                   </span>
                 </summary>
                 <p className="pb-5 text-pretty text-fg-muted">{f.a}</p>
-              </details>
-            </Reveal>
+            </details>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

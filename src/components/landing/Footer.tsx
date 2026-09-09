@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Logo } from '@/components/common/Logo';
 import { CtaLink } from './primitives';
 import { Reveal } from './Reveal';
+import { CTA } from './cta';
 
 const COLUMNS = [
   {
@@ -43,17 +44,19 @@ export function Footer() {
             </p>
           </Reveal>
           <Reveal delay={2}>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <CtaLink href="/simulator">Apri il simulatore</CtaLink>
-              <CtaLink href="/catalogue" variant="secondary">
-                Sfoglia il catalogo
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <CtaLink href={CTA.simulator.href} className="w-full sm:w-auto">
+                {CTA.simulator.label}
+              </CtaLink>
+              <CtaLink href={CTA.catalogue.href} variant="secondary" className="w-full sm:w-auto">
+                {CTA.catalogue.label}
               </CtaLink>
             </div>
           </Reveal>
         </div>
       </div>
 
-      <div className="shell grid grid-cols-1 gap-x-8 gap-y-10 py-12 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
+      <div className="shell grid grid-cols-1 gap-x-8 gap-y-8 py-12 sm:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr]">
         <div className="flex flex-col items-start gap-4">
           <Link href="/" aria-label="ETF Lab — home">
             <Logo />

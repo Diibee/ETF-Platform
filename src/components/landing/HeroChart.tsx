@@ -68,7 +68,7 @@ export function HeroChart() {
 
   return (
     <figure className="m-0 overflow-hidden rounded-2xl border border-border bg-surface shadow-lg">
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border px-5 py-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-border px-6 py-4">
         <div>
           <p className="text-[0.9375rem] font-semibold tracking-tight text-fg">
             Proiezione a {YEARS} anni
@@ -77,7 +77,10 @@ export function HeroChart() {
             {formatEurCompact(INITIAL)} iniziali + {MONTHLY} €/mese · portafoglio 60/25/8/7
           </p>
         </div>
-        <span className="rounded-md bg-surface-2 px-2 py-1 font-mono text-[0.6875rem] text-fg-subtle">
+        {/* Hidden below sm: at 375px this wraps onto its own line and reads as
+            an orphaned chip. The provenance claim is made at length in the
+            "Su cosa si basano i numeri" section anyway. */}
+        <span className="hidden rounded-md bg-surface-2 px-2 py-1 font-mono text-[0.6875rem] text-fg-subtle sm:inline-block">
           dati reali dal catalogo
         </span>
       </div>
@@ -138,9 +141,9 @@ export function HeroChart() {
         </svg>
       </div>
 
-      <figcaption className="grid grid-cols-3 gap-3 border-t border-border px-5 py-4">
+      <figcaption className="grid grid-cols-3 gap-3 border-t border-border px-6 py-4">
         <div className="flex flex-col gap-1">
-          <span className="flex items-center gap-1.5 text-[0.6875rem] font-medium uppercase tracking-wide text-fg-subtle">
+          <span className="flex items-center gap-2 text-[0.6875rem] font-medium uppercase tracking-wide text-fg-subtle">
             <span aria-hidden="true" className="size-2 rounded-full bg-[var(--data-gross)]" />
             Lordo
           </span>
@@ -149,7 +152,7 @@ export function HeroChart() {
           </span>
         </div>
         <div className="flex flex-col gap-1">
-          <span className="flex items-center gap-1.5 text-[0.6875rem] font-medium uppercase tracking-wide text-fg-subtle">
+          <span className="flex items-center gap-2 text-[0.6875rem] font-medium uppercase tracking-wide text-fg-subtle">
             <span aria-hidden="true" className="size-2 rounded-full bg-[var(--data-net)]" />
             Netto
           </span>

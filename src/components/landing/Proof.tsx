@@ -61,26 +61,30 @@ export function Proof() {
     <section id="dati" className="section-y scroll-mt-20 border-y border-border bg-surface-2/40">
       <div className="shell flex flex-col gap-[var(--section-gap)]">
         <SectionHeading
+          align="center"
           eyebrow="Su cosa si basano i numeri"
           title="Nessuna recensione, solo provenienza dei dati"
           lead="Uno strumento di calcolo si giudica dalle fonti e dalle regole che applica. Qui sono entrambe esposte."
         />
 
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
-          {METRICS.map((m, i) => (
-            <Reveal key={m.label} delay={i} className="flex flex-col gap-1.5">
+        <Reveal>
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
+            {METRICS.map(m => (
+            <div key={m.label} className="flex flex-col gap-2">
               <dt className="order-2 text-sm font-medium text-fg">{m.label}</dt>
-              <dd className="tnum order-1 m-0 text-h2 leading-none font-semibold tracking-tight text-brand">
+              <dd className="tnum order-1 m-0 text-h3 leading-none font-semibold tracking-tight text-brand">
                 {m.value}
               </dd>
               <dd className="order-3 m-0 text-xs text-pretty text-fg-subtle">{m.sub}</dd>
-            </Reveal>
-          ))}
-        </dl>
+            </div>
+            ))}
+          </dl>
+        </Reveal>
 
-        <ul className="grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-2">
-          {GUARANTEES.map(({ icon: Icon, title, body }, i) => (
-            <Reveal as="li" key={title} delay={i % 2} className="flex">
+        <Reveal>
+          <ul className="grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-2">
+            {GUARANTEES.map(({ icon: Icon, title, body }) => (
+            <li key={title} className="flex">
               <Panel className="flex w-full gap-4 bg-surface">
                 <span
                   aria-hidden="true"
@@ -88,14 +92,15 @@ export function Proof() {
                 >
                   <Icon size={17} strokeWidth={2} />
                 </span>
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-2">
                   <h3 className="text-[0.9375rem] font-semibold tracking-tight text-fg">{title}</h3>
                   <p className="text-sm text-pretty text-fg-muted">{body}</p>
                 </div>
               </Panel>
-            </Reveal>
-          ))}
-        </ul>
+            </li>
+            ))}
+          </ul>
+        </Reveal>
       </div>
     </section>
   );
