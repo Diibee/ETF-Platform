@@ -1,107 +1,86 @@
+'use client';
+
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { Logo } from './Logo';
+import { ThemeToggle } from './ThemeToggle';
+import { cn } from '@/lib/cn';
 
 const LINKS = [
-  { to: '/catalogue', label: 'Catalogo' },
-  { to: '/simulator', label: 'Simulatore' },
-  { to: '/questionnaire', label: 'Profilo' },
+  { href: '/catalogue', label: 'Catalogo' },
+  { href: '/simulator', label: 'Simulatore' },
+  { href: '/questionnaire', label: 'Profilo' },
 ];
 
-function SunIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="4" />
-      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-    </svg>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  );
-}
-
+/** Utility bar for the app routes. The landing page uses `LandingNav` instead. */
 export function Navbar() {
-  const { theme, toggle } = useTheme();
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-        <NavLink to="/" className="font-bold text-gray-900 dark:text-white text-base tracking-tight">
-          📈 ETF Platform Italia
-        </NavLink>
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
-        {/* Desktop nav */}
-        <div className="hidden sm:flex items-center gap-6 text-sm font-medium">
+  return (
+    <header className="sticky top-0 z-50 border-b border-border bg-surface/85 backdrop-blur-md">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
+        <Link href="/" className="rounded-md" aria-label="ETF Lab — home">
+          <Logo />
+        </Link>
+
+        <nav aria-label="Navigazione principale" className="hidden items-center gap-1 sm:flex">
           {LINKS.map(l => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              className={({ isActive }) =>
-                isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
-              }
+            <Link
+              key={l.href}
+              href={l.href}
+              aria-current={isActive(l.href) ? 'page' : undefined}
+              className={cn(
+                'rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200',
+                isActive(l.href)
+                  ? 'bg-brand-soft text-brand-soft-fg'
+                  : 'text-fg-muted hover:bg-surface-2 hover:text-fg',
+              )}
             >
               {l.label}
-            </NavLink>
+            </Link>
           ))}
-          <button
-            onClick={toggle}
-            className="ml-2 p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Cambia tema"
-          >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-          </button>
-        </div>
+          <ThemeToggle className="ml-1" />
+        </nav>
 
-        {/* Mobile: theme toggle + hamburger */}
-        <div className="flex sm:hidden items-center gap-2">
+        <div className="flex items-center gap-1 sm:hidden">
+          <ThemeToggle />
           <button
-            onClick={toggle}
-            className="p-1.5 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Cambia tema"
-          >
-            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-          </button>
-          <button
+            type="button"
             onClick={() => setMenuOpen(v => !v)}
-            className="p-1.5 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            aria-label="Menu"
+            aria-expanded={menuOpen}
+            aria-controls="app-mobile-nav"
+            aria-label="Menu di navigazione"
+            className="inline-flex size-11 cursor-pointer items-center justify-center rounded-lg text-fg-muted transition-colors duration-200 hover:bg-surface-2 hover:text-fg"
           >
-            {menuOpen ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M18 6 6 18M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+              {menuOpen ? <path d="M18 6 6 18M6 6l12 12" /> : <path d="M4 6h16M4 12h16M4 18h16" />}
+            </svg>
           </button>
         </div>
       </div>
 
-      {/* Mobile menu dropdown */}
       {menuOpen && (
-        <div className="sm:hidden border-t border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-900 px-4 py-3 flex flex-col gap-3">
+        <nav id="app-mobile-nav" aria-label="Navigazione mobile" className="border-t border-border bg-surface px-4 py-2 sm:hidden">
           {LINKS.map(l => (
-            <NavLink
-              key={l.to}
-              to={l.to}
+            <Link
+              key={l.href}
+              href={l.href}
               onClick={() => setMenuOpen(false)}
-              className={({ isActive }) =>
-                `text-sm font-medium py-1 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300'}`
-              }
+              aria-current={isActive(l.href) ? 'page' : undefined}
+              className={cn(
+                'flex min-h-11 items-center rounded-lg px-3 text-sm font-medium transition-colors duration-200',
+                isActive(l.href) ? 'text-brand-soft-fg' : 'text-fg-muted hover:bg-surface-2 hover:text-fg',
+              )}
             >
               {l.label}
-            </NavLink>
+            </Link>
           ))}
-        </div>
+        </nav>
       )}
-    </nav>
+    </header>
   );
 }

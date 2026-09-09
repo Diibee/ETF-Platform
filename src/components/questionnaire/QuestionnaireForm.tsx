@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import type { UserProfile } from '../../types/etf';
 
@@ -110,6 +112,7 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <StepHeader step={1} title="Quanti anni hai?" subtitle="Serve per calibrare l'orizzonte e il rischio in base all'età." />
       <div className="space-y-4">
         <input type="range" min={18} max={80} value={age}
+          aria-label="Età in anni" aria-valuetext={`${age} anni`}
           onChange={e => setAge(Number(e.target.value))} className="w-full accent-blue-600" />
         <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">{age} anni</p>
       </div>
@@ -122,9 +125,10 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <StepHeader step={2} title="Qual è il tuo orizzonte temporale?" subtitle="Per quanti anni vuoi tenere investito il capitale?" />
       <div className="space-y-4">
         <input type="range" min={1} max={40} value={horizon}
+          aria-label="Orizzonte temporale in anni" aria-valuetext={`${horizon} anni`}
           onChange={e => setHorizon(Number(e.target.value))} className="w-full accent-blue-600" />
         <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">{horizon} anni</p>
-        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500"><span>1 anno</span><span>40 anni</span></div>
+        <div className="flex justify-between text-xs text-fg-subtle"><span>1 anno</span><span>40 anni</span></div>
       </div>
       {NAV}
     </div>
@@ -164,7 +168,7 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
         ] as [UserProfile['riskTolerance'], string, string][]).map(([val, label, sub]) => (
           <OptionButton key={val} active={riskTolerance === val} onClick={() => setRiskTolerance(val)}>
             <span><span className="font-semibold">{val}. {label}</span>
-            <span className="block text-gray-400 dark:text-gray-500 text-xs mt-0.5">{sub}</span></span>
+            <span className="block text-fg-subtle text-xs mt-0.5">{sub}</span></span>
           </OptionButton>
         ))}
       </div>
@@ -177,11 +181,12 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <StepHeader step={5} title="Quanto puoi investire inizialmente?" />
       <div className="space-y-4">
         <input type="range" min={0} max={500000} step={500} value={initialCapital}
+          aria-label="Capitale iniziale in euro" aria-valuetext={`${initialCapital} euro`}
           onChange={e => setInitialCapital(Number(e.target.value))} className="w-full accent-blue-600" />
         <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">
           {new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(initialCapital)}
         </p>
-        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500"><span>0 €</span><span>500.000 €</span></div>
+        <div className="flex justify-between text-xs text-fg-subtle"><span>0 €</span><span>500.000 €</span></div>
       </div>
       {NAV}
     </div>
@@ -192,11 +197,12 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <StepHeader step={6} title="Quanto puoi versare ogni mese?" />
       <div className="space-y-4">
         <input type="range" min={0} max={5000} step={50} value={monthlyContribution}
+          aria-label="Contributo mensile in euro" aria-valuetext={`${monthlyContribution} euro al mese`}
           onChange={e => setMonthlyContribution(Number(e.target.value))} className="w-full accent-blue-600" />
         <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">
           {new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(monthlyContribution)}/mese
         </p>
-        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500"><span>0 €</span><span>5.000 €/mese</span></div>
+        <div className="flex justify-between text-xs text-fg-subtle"><span>0 €</span><span>5.000 €/mese</span></div>
       </div>
       {NAV}
     </div>
@@ -214,7 +220,7 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
         ] as [UserProfile['experience'], string, string][]).map(([val, label, sub]) => (
           <OptionButton key={val} active={experience === val} onClick={() => setExperience(val)}>
             <span><span className="font-semibold">{label}</span>
-            <span className="block text-gray-400 dark:text-gray-500 text-xs mt-0.5">{sub}</span></span>
+            <span className="block text-fg-subtle text-xs mt-0.5">{sub}</span></span>
           </OptionButton>
         ))}
       </div>
@@ -244,9 +250,10 @@ export function QuestionnaireForm({ onComplete }: QuestionnaireFormProps) {
       <StepHeader step={9} title="Quanti ETF vuoi nel portafoglio?" subtitle="Più ETF = più diversificazione, ma anche più strumenti da gestire e ribilanciare." />
       <div className="space-y-4">
         <input type="range" min={2} max={8} value={preferredEtfCount}
+          aria-label="Numero di ETF preferito" aria-valuetext={`${preferredEtfCount} ETF`}
           onChange={e => setPreferredEtfCount(Number(e.target.value))} className="w-full accent-blue-600" />
         <p className="text-center text-3xl font-bold text-blue-600 dark:text-blue-400">{preferredEtfCount} ETF</p>
-        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500"><span>2 (essenziale)</span><span>8 (granulare)</span></div>
+        <div className="flex justify-between text-xs text-fg-subtle"><span>2 (essenziale)</span><span>8 (granulare)</span></div>
         <p className="text-xs text-center text-gray-500 dark:text-gray-400 mt-3">
           Ti mostreremo 3 portafogli (Semplice / Bilanciato / Diversificato) intorno a questa preferenza.
         </p>
