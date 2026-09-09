@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Logo } from '@/components/common/Logo';
-import { CtaLink } from './primitives';
-import { Reveal } from './Reveal';
+import { CtaLink, CtaArrow } from './primitives';
+import { Reveal, StaggerGroup, StaggerItem } from '@/components/motion';
 import { CTA } from './cta';
 
 const COLUMNS = [
@@ -47,6 +47,7 @@ export function Footer() {
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
               <CtaLink href={CTA.simulator.href} className="w-full sm:w-auto">
                 {CTA.simulator.label}
+                <CtaArrow />
               </CtaLink>
               <CtaLink href={CTA.catalogue.href} variant="secondary" className="w-full sm:w-auto">
                 {CTA.catalogue.label}
@@ -70,18 +71,18 @@ export function Footer() {
         {COLUMNS.map(col => (
           <nav key={col.heading} aria-label={col.heading} className="flex flex-col gap-3">
             <h2 className="text-eyebrow uppercase text-fg-subtle">{col.heading}</h2>
-            <ul className="flex list-none flex-col gap-2 p-0">
+            <StaggerGroup as="ul" step={0.04} className="flex list-none flex-col gap-2 p-0">
               {col.links.map(l => (
-                <li key={l.href}>
+                <StaggerItem as="li" key={l.href} y={8}>
                   <Link
                     href={l.href}
-                    className="text-sm text-fg-muted transition-colors duration-200 hover:text-fg"
+                    className="underline-wipe inline-block text-sm text-fg-muted transition-colors duration-200 hover:text-fg"
                   >
                     {l.label}
                   </Link>
-                </li>
+                </StaggerItem>
               ))}
-            </ul>
+            </StaggerGroup>
           </nav>
         ))}
       </div>

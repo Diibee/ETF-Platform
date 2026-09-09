@@ -1,6 +1,6 @@
 import { Table2, TrendingUp, Waves, Landmark, GitCompareArrows, UserCog } from 'lucide-react';
 import { SectionHeading, Panel } from './primitives';
-import { Reveal } from './Reveal';
+import { StaggerGroup, StaggerItem, Spotlight } from '@/components/motion';
 import { CATALOGUE, MONTE_CARLO_RUNS_LABEL } from './stats';
 
 const FEATURES = [
@@ -57,29 +57,34 @@ export function Features() {
           lead="Ogni funzione lavora sugli stessi dati e sulle stesse regole fiscali, così i numeri non cambiano passando da una schermata all’altra."
         />
 
-        <Reveal>
-          <ul className="grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map(({ icon: Icon, title, body, meta }) => (
-              <li key={title} className="flex">
-              <Panel className="flex w-full flex-col gap-4 hover:border-border-strong hover:shadow-md">
-                <span
-                  aria-hidden="true"
-                  className="inline-flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand-soft-fg"
-                >
-                  <Icon size={19} strokeWidth={2} />
-                </span>
-                <div className="flex flex-1 flex-col gap-2">
-                  <h3 className="text-h3 text-fg">{title}</h3>
-                  <p className="text-sm text-pretty text-fg-muted">{body}</p>
-                </div>
-                <p className="mt-auto border-t border-border pt-3 font-mono text-[0.6875rem] text-fg-subtle">
-                  {meta}
-                </p>
-              </Panel>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+        <StaggerGroup as="ul" className="grid list-none grid-cols-1 gap-6 p-0 md:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map(({ icon: Icon, title, body, meta }) => (
+            <StaggerItem as="li" key={title} className="flex">
+              {/* The radius is repeated on the Spotlight wrapper because its
+                  glow pseudo-element inherits `border-radius` — without it the
+                  gradient would square off the card's rounded corners. */}
+              <Spotlight className="group flex w-full rounded-2xl">
+                <Panel hover className="flex w-full flex-col gap-4">
+                  <span
+                    aria-hidden="true"
+                    className="inline-flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand-soft-fg transition-[transform,background-color,color] duration-300 ease-[var(--ease-spring)] group-hover:scale-110 group-hover:bg-brand group-hover:text-brand-fg"
+                  >
+                    <Icon size={19} strokeWidth={2} />
+                  </span>
+                  <div className="flex flex-1 flex-col gap-2">
+                    <h3 className="text-h3 text-fg transition-colors duration-200 group-hover:text-brand">
+                      {title}
+                    </h3>
+                    <p className="text-sm text-pretty text-fg-muted">{body}</p>
+                  </div>
+                  <p className="mt-auto border-t border-border pt-3 font-mono text-[0.6875rem] text-fg-subtle transition-colors duration-300 group-hover:border-brand/30 group-hover:text-fg-muted">
+                    {meta}
+                  </p>
+                </Panel>
+              </Spotlight>
+            </StaggerItem>
+          ))}
+        </StaggerGroup>
       </div>
     </section>
   );

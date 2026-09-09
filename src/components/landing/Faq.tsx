@@ -1,5 +1,5 @@
 import { SectionHeading } from './primitives';
-import { Reveal } from './Reveal';
+import { StaggerGroup, StaggerItem } from '@/components/motion';
 
 const FAQS = [
   {
@@ -36,6 +36,11 @@ const FAQS = [
  * Native <details>/<summary> accordion: keyboard-operable, screen-reader
  * friendly and searchable by the browser's own find-in-page, with zero
  * JavaScript. A custom disclosure widget here would be strictly worse.
+ *
+ * The open/close height is animated in CSS via `::details-content` and
+ * `interpolate-size` (see the interaction layer in `index.css`), which is the
+ * only way to get an eased accordion without giving up the native element.
+ * Browsers that don't support it snap open exactly as before.
  */
 export function Faq() {
   return (
@@ -47,16 +52,20 @@ export function Faq() {
           lead="Su cosa fa lo strumento, da dove prende i dati e — soprattutto — cosa non è."
         />
 
-        <Reveal className="measure mx-auto w-full">
+        <StaggerGroup step={0.045} className="measure mx-auto w-full">
           {FAQS.map(f => (
-            <details key={f.q} className="group border-b border-border">
-                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 py-5 text-left [&::-webkit-details-marker]:hidden">
-                  <h3 className="text-[1.0625rem] font-semibold tracking-tight text-fg transition-colors duration-200 group-hover:text-brand">
+            <StaggerItem key={f.q} y={10}>
+              <details className="group border-b border-border">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-4 rounded-lg py-5 text-left transition-colors duration-200 [&::-webkit-details-marker]:hidden">
+                  <h3 className="text-[1.0625rem] font-semibold tracking-tight text-fg transition-[color,transform] duration-200 ease-[var(--ease-out-quart)] group-hover:translate-x-0.5 group-hover:text-brand">
                     {f.q}
                   </h3>
+                  {/* A plus that rotates into a cross: one glyph, two states,
+                      and the rotation direction reads as opening rather than
+                      as a chevron flipping. */}
                   <span
                     aria-hidden="true"
-                    className="mt-1 shrink-0 text-fg-subtle transition-transform duration-200 ease-[var(--ease-out-quart)] group-open:rotate-45"
+                    className="mt-1 shrink-0 text-fg-subtle transition-[transform,color] duration-300 ease-[var(--ease-out-quart)] group-hover:text-brand group-open:rotate-135"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                       <path d="M12 5v14M5 12h14" />
@@ -64,9 +73,10 @@ export function Faq() {
                   </span>
                 </summary>
                 <p className="pb-5 text-pretty text-fg-muted">{f.a}</p>
-            </details>
+              </details>
+            </StaggerItem>
           ))}
-        </Reveal>
+        </StaggerGroup>
       </div>
     </section>
   );

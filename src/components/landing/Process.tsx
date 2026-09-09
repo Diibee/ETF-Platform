@@ -1,6 +1,6 @@
-import { SectionHeading, CtaLink } from './primitives';
+import { SectionHeading, CtaLink, CtaArrow } from './primitives';
 import { CTA } from './cta';
-import { Reveal } from './Reveal';
+import { StaggerGroup, StaggerItem } from '@/components/motion';
 
 const STEPS = [
   {
@@ -45,34 +45,34 @@ export function Process() {
           lead="Ogni passaggio è indipendente: puoi partire dal catalogo se sai già cosa cercare, o dal simulatore se hai già un portafoglio."
         />
 
-        <Reveal>
-          <ol className="grid list-none grid-cols-1 gap-x-8 gap-y-8 p-0 md:grid-cols-2 lg:grid-cols-4">
+        {/* Steps arrive left to right at 90ms apart, which traces the same path
+            the connector rail draws — the sequence *is* the explanation. */}
+        <StaggerGroup as="ol" step={0.09} className="grid list-none grid-cols-1 gap-x-8 gap-y-8 p-0 md:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((s, i) => (
-            <li key={s.n} className="relative flex flex-col gap-3">
+            <StaggerItem as="li" key={s.n} className="group/step relative flex flex-col gap-3">
               {/* Connector rail: drawn only between steps, desktop only. */}
               {i < STEPS.length - 1 && (
                 <span
                   aria-hidden="true"
-                  className="absolute top-4 left-[calc(2rem+0.75rem)] hidden h-px w-[calc(100%-2rem)] bg-gradient-to-r from-border-strong to-transparent lg:block"
+                  className="absolute top-4 left-[calc(2rem+0.75rem)] hidden h-px w-[calc(100%-2rem)] bg-gradient-to-r from-border-strong to-transparent transition-colors duration-500 group-hover/step:from-brand lg:block"
                 />
               )}
-              <span className="tnum inline-flex size-8 items-center justify-center rounded-lg border border-border bg-surface font-mono text-xs font-semibold text-brand shadow-xs">
+              <span className="tnum inline-flex size-8 items-center justify-center rounded-lg border border-border bg-surface font-mono text-xs font-semibold text-brand shadow-xs transition-[transform,background-color,color,border-color,box-shadow] duration-300 ease-[var(--ease-spring)] group-hover/step:-translate-y-0.5 group-hover/step:scale-110 group-hover/step:border-brand group-hover/step:bg-brand group-hover/step:text-brand-fg group-hover/step:shadow-md">
                 {s.n}
               </span>
-              <h3 className="text-h3 text-fg">{s.title}</h3>
+              <h3 className="text-h3 text-fg transition-colors duration-200 group-hover/step:text-brand">
+                {s.title}
+              </h3>
               <p className="text-sm text-pretty text-fg-muted">{s.body}</p>
               {s.href && s.cta && (
                 <CtaLink href={s.href} variant="ghost" className="-ml-3 self-start px-3 text-sm">
                   {s.cta}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <path d="M5 12h13M13 6l6 6-6 6" />
-                  </svg>
+                  <CtaArrow size={14} />
                 </CtaLink>
               )}
-            </li>
+            </StaggerItem>
           ))}
-          </ol>
-        </Reveal>
+        </StaggerGroup>
       </div>
     </section>
   );

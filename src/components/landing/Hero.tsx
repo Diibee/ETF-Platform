@@ -1,28 +1,34 @@
-import { CtaLink, Eyebrow } from './primitives';
-import { Reveal } from './Reveal';
+import { CtaLink, CtaArrow, Eyebrow } from './primitives';
+import { StaggerGroup, StaggerItem, CountUp } from '@/components/motion';
 import { HeroChart } from './HeroChart';
 import { CTA, CTA_REASSURANCE } from './cta';
-import { CATALOGUE, MONTE_CARLO_RUNS_LABEL } from './stats';
+import { CATALOGUE, MONTE_CARLO_RUNS } from './stats';
 
-const TRUST = [
-  { value: String(CATALOGUE.count), label: 'ETF nel catalogo' },
-  { value: String(CATALOGUE.assetClasses), label: 'classi di attivo' },
-  { value: MONTE_CARLO_RUNS_LABEL, label: 'simulazioni Monte Carlo' },
+const TRUST: Array<{ value: number | string; label: string }> = [
+  { value: CATALOGUE.count, label: 'ETF nel catalogo' },
+  { value: CATALOGUE.assetClasses, label: 'classi di attivo' },
+  { value: MONTE_CARLO_RUNS, label: 'simulazioni Monte Carlo' },
   { value: '26% + 0,2%', label: 'capital gain e bollo' },
 ];
 
 /**
  * Hero.
  *
- * Two deliberate restraints:
+ * Three deliberate restraints:
  *
- * 1. Nothing here is wrapped in a scroll reveal. Everything is above the fold,
- *    so an entrance animation starting at `opacity: 0` holds back the Largest
- *    Contentful Paint until it finishes — measured at +862ms.
+ * 1. Nothing above the fold is wrapped in a scroll reveal. An entrance
+ *    animation starting at `opacity: 0` holds back the Largest Contentful
+ *    Paint until it finishes — measured at +862ms. The motion that *is* here
+ *    (the chart drawing itself in, the pulsing status dot) animates properties
+ *    that leave the text painted at full opacity from the first frame.
  * 2. One decorative device, not four. This previously stacked a gradient-text
  *    headline span, a radial halo, a dotted grid and a split pill badge. Each
  *    is a stock flourish; together they read as generated rather than
  *    designed. The headline now carries the weight on its own.
+ * 3. The trust strip counts up rather than fading in. It sits at the fold on
+ *    desktop, so a fade would either fire before it is seen or not at all;
+ *    tweened figures read as the page computing them, which is the claim the
+ *    strip is making anyway.
  */
 export function Hero() {
   return (
@@ -35,7 +41,15 @@ export function Hero() {
 
       <div className="shell relative grid items-center gap-x-12 gap-y-12 pt-12 pb-[var(--section-y)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:pt-16">
         <div className="flex flex-col items-start gap-6">
-          <Eyebrow>Fiscalità italiana, in ogni proiezione</Eyebrow>
+          <Eyebrow className="inline-flex items-center gap-2">
+            {/* Two stacked dots: the outer one expands and fades on a loop, the
+                inner one stays put so the marker never disappears. */}
+            <span aria-hidden="true" className="relative inline-flex size-2">
+              <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand opacity-60" />
+              <span className="relative inline-flex size-2 rounded-full bg-brand" />
+            </span>
+            Fiscalità italiana, in ogni proiezione
+          </Eyebrow>
 
           <h1 className="text-display text-balance text-fg">
             Il rendimento che leggi non è quello che incassi.
@@ -52,9 +66,7 @@ export function Hero() {
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
             <CtaLink href={CTA.simulator.href} className="w-full sm:w-auto">
               {CTA.simulator.label}
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M5 12h13M13 6l6 6-6 6" />
-              </svg>
+              <CtaArrow />
             </CtaLink>
             <CtaLink href={CTA.catalogue.href} variant="secondary" className="w-full sm:w-auto">
               {CTA.catalogue.label}
@@ -69,21 +81,27 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Trust strip — closes the hero and hands off to the problem section.
-          Below the fold on mobile, so revealing on scroll is safe here. */}
+      {/* Trust strip — closes the hero and hands off to the problem section. */}
       <div className="relative border-y border-border bg-surface/50">
-        <Reveal>
-          <dl className="shell grid grid-cols-2 gap-x-6 gap-y-6 py-8 md:grid-cols-4">
-            {TRUST.map(t => (
-            <div key={t.label} className="flex flex-col gap-1">
+        <StaggerGroup
+          as="dl"
+          step={0.07}
+          amount={0.4}
+          className="shell grid grid-cols-2 gap-x-6 gap-y-6 py-8 md:grid-cols-4"
+        >
+          {TRUST.map(t => (
+            <StaggerItem key={t.label} y={10} className="flex flex-col gap-1">
               <dt className="order-2 text-xs text-fg-subtle">{t.label}</dt>
               <dd className="tnum order-1 m-0 text-h3 leading-none font-semibold tracking-tight text-fg">
-                {t.value}
+                {typeof t.value === 'number' ? (
+                  <CountUp value={t.value} duration={1.1} />
+                ) : (
+                  t.value
+                )}
               </dd>
-            </div>
-            ))}
-          </dl>
-        </Reveal>
+            </StaggerItem>
+          ))}
+        </StaggerGroup>
       </div>
     </section>
   );

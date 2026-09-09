@@ -1,6 +1,6 @@
 import { Receipt, Layers, Ban, Gauge } from 'lucide-react';
 import { SectionHeading } from './primitives';
-import { Reveal } from './Reveal';
+import { StaggerGroup, StaggerItem } from '@/components/motion';
 
 const PROBLEMS = [
   {
@@ -40,24 +40,27 @@ export function Problem() {
           lead="Quattro ostacoli ricorrenti che separano il rendimento pubblicizzato da quello che resta davvero in tasca."
         />
 
-        <Reveal>
-          <ul className="grid list-none grid-cols-1 gap-x-8 gap-y-8 p-0 md:grid-cols-2">
-            {PROBLEMS.map(({ icon: Icon, title, body }) => (
-              <li key={title} className="flex gap-4">
+        {/* One observer on the <ul>, four cascading children — see StaggerGroup.
+            `group/item` scopes the icon's hover state to its own row, so
+            hovering the third problem doesn't light up the other three. */}
+        <StaggerGroup as="ul" className="grid list-none grid-cols-1 gap-x-8 gap-y-8 p-0 md:grid-cols-2">
+          {PROBLEMS.map(({ icon: Icon, title, body }) => (
+            <StaggerItem as="li" key={title} className="group/item flex gap-4">
               <span
                 aria-hidden="true"
-                className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-accent shadow-xs"
+                className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-border bg-surface text-accent shadow-xs transition-[transform,background-color,border-color,box-shadow] duration-300 ease-[var(--ease-out-quart)] group-hover/item:-translate-y-0.5 group-hover/item:scale-105 group-hover/item:border-accent/40 group-hover/item:bg-accent-soft group-hover/item:shadow-sm"
               >
                 <Icon size={19} strokeWidth={2} />
               </span>
               <div className="flex flex-col gap-2">
-                <h3 className="text-h3 text-fg">{title}</h3>
+                <h3 className="text-h3 text-fg transition-colors duration-200 group-hover/item:text-accent">
+                  {title}
+                </h3>
                 <p className="text-pretty text-fg-muted">{body}</p>
               </div>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+            </StaggerItem>
+          ))}
+        </StaggerGroup>
       </div>
     </section>
   );

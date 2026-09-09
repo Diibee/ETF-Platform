@@ -1,6 +1,6 @@
 import { Check, Circle } from 'lucide-react';
 import { SectionHeading, CtaLink, Panel } from './primitives';
-import { Reveal } from './Reveal';
+import { Reveal } from '@/components/motion';
 import { CTA, CTA_REASSURANCE } from './cta';
 import { CATALOGUE, MONTE_CARLO_RUNS_LABEL } from './stats';
 import { ReturnDisclaimer } from '@/components/common/ReturnDisclaimer';
@@ -35,10 +35,14 @@ export function Offer() {
         />
 
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1.25fr_1fr]">
-          <Reveal className="flex">
-            <Panel className="flex w-full flex-col gap-6 border-brand/35 p-6 shadow-md">
+          <Reveal variant="scale" className="flex">
+            <Panel hover className="flex w-full flex-col gap-6 border-brand/35 p-6 shadow-md">
               <div className="flex flex-col gap-2">
-                <span className="w-fit rounded-full bg-brand px-3 py-1 text-[0.6875rem] font-semibold tracking-wide text-brand-fg uppercase">
+                <span className="inline-flex w-fit items-center gap-2 rounded-full bg-brand px-3 py-1 text-[0.6875rem] font-semibold tracking-wide text-brand-fg uppercase">
+                  <span aria-hidden="true" className="relative inline-flex size-1.5">
+                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand-fg opacity-75" />
+                    <span className="relative inline-flex size-1.5 rounded-full bg-brand-fg" />
+                  </span>
                   Disponibile ora
                 </span>
                 <h3 className="text-h3 text-fg">Accesso completo</h3>
@@ -50,8 +54,16 @@ export function Offer() {
 
               <ul className="flex list-none flex-col gap-3 p-0">
                 {INCLUDED.map(item => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-fg-muted">
-                    <Check size={17} strokeWidth={2.5} aria-hidden="true" className="mt-0.5 shrink-0 text-positive" />
+                  <li
+                    key={item}
+                    className="group/row flex items-start gap-3 text-sm text-fg-muted transition-colors duration-200 hover:text-fg"
+                  >
+                    <Check
+                      size={17}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="mt-0.5 shrink-0 text-positive transition-transform duration-200 ease-[var(--ease-spring)] group-hover/row:scale-125"
+                    />
                     <span className="text-pretty">{item}</span>
                   </li>
                 ))}
@@ -69,7 +81,7 @@ export function Offer() {
             </Panel>
           </Reveal>
 
-          <Reveal delay={1} className="flex">
+          <Reveal variant="right" delay={2} className="flex">
             <Panel className="flex w-full flex-col gap-6 bg-surface/60">
               <div className="flex flex-col gap-1">
                 <h3 className="text-h3 text-fg">In arrivo</h3>
@@ -80,8 +92,16 @@ export function Offer() {
 
               <ul className="flex list-none flex-col gap-3 p-0">
                 {ROADMAP.map(item => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-fg-subtle">
-                    <Circle size={15} strokeWidth={2} aria-hidden="true" className="mt-1 shrink-0 opacity-50" />
+                  <li
+                    key={item}
+                    className="group/row flex items-start gap-3 text-sm text-fg-subtle transition-colors duration-200 hover:text-fg-muted"
+                  >
+                    <Circle
+                      size={15}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                      className="mt-1 shrink-0 opacity-50 transition-opacity duration-200 group-hover/row:opacity-100"
+                    />
                     <span className="text-pretty">{item}</span>
                   </li>
                 ))}
@@ -90,7 +110,7 @@ export function Offer() {
           </Reveal>
         </div>
 
-        <Reveal delay={2} className="flex flex-col gap-3">
+        <Reveal delay={3} className="flex flex-col gap-3">
           <FriendsDisclaimer />
           <ReturnDisclaimer />
         </Reveal>

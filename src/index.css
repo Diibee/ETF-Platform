@@ -58,6 +58,12 @@
   --info: #0b6fa4;
   --info-soft: #e4f2fa;
   --info-soft-fg: #08557d;
+  /* Violet has no semantic meaning of its own; it exists so the real-estate
+     asset class gets a badge tint drawn from tokens rather than from the raw
+     Tailwind palette. */
+  --violet: #7c4ddc;
+  --violet-soft: #efe9fd;
+  --violet-soft-fg: #5b32b0;
 
   /* — Data series (simulator) -------------------------------------------- */
   --data-gross: #2c5fe8;
@@ -135,6 +141,10 @@
   --info-soft: #0c2533;
   --info-soft-fg: #7dd3fc;
 
+  --violet: #a78bfa;
+  --violet-soft: #1e1733;
+  --violet-soft-fg: #c4b5fd;
+
   --data-gross: #5b87ff;
   --data-net: #34d399;
   --data-real: #a78bfa;
@@ -205,6 +215,9 @@
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
   --color-info-soft-fg: var(--info-soft-fg);
+  --color-violet: var(--violet);
+  --color-violet-soft: var(--violet-soft);
+  --color-violet-soft-fg: var(--violet-soft-fg);
 
   --color-equity: var(--asset-equity);
   --color-bonds: var(--asset-bonds);
@@ -232,9 +245,16 @@
 
   /* Motion */
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Overshoots by ~4%. For things that arrive (badges, thumbs), never text. */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --animate-fade-up: fade-up 0.32s var(--ease-out-quart) both;
   --animate-fade-in: fade-in 0.2s ease-out both;
   --animate-pop-in: pop-in 0.28s var(--ease-out-quart) both;
+  --animate-draw: draw 1.6s var(--ease-out-quart) both;
+  --animate-float: float 8s ease-in-out infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-gradient-pan: gradient-pan 9s ease-in-out infinite alternate;
 }
 
 @keyframes fade-up {
@@ -265,6 +285,46 @@
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Line drawing. Paired with `pathLength="1"` on the path, so the dash length
+   is normalised and no JavaScript has to measure the geometry. */
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Skeleton sweep — replaces `animate-pulse`, which blinks the whole block. */
+@keyframes shimmer {
+  from {
+    background-position: -160% 0;
+  }
+  to {
+    background-position: 160% 0;
+  }
+}
+
+@keyframes gradient-pan {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
   }
 }
 
@@ -460,6 +520,10 @@
   --halo: rgb(44 95 232 / 0.14);
   --halo-2: rgb(176 111 6 / 0.10);
   --hairline: rgb(11 18 32 / 0.06);
+  /* Cursor-follow glow. Sits *over* the card, so it has to stay under ~0.10
+     alpha: anything stronger tints the body copy underneath it. */
+  --spot: rgb(44 95 232 / 0.09);
+  --sheen: rgb(255 255 255 / 0.22);
 }
 
 .dark {
@@ -468,6 +532,8 @@
   --halo: rgb(91 135 255 / 0.18);
   --halo-2: rgb(240 170 60 / 0.10);
   --hairline: rgb(255 255 255 / 0.07);
+  --spot: rgb(91 135 255 / 0.13);
+  --sheen: rgb(255 255 255 / 0.10);
 }
 
 @theme inline {
@@ -565,5 +631,206 @@
       color: CanvasText;
       forced-color-adjust: none;
     }
+  }
+}
+
+
+/* ============================================================================
+   INTERACTION LAYER
+   Hover, press and pointer states live here as utilities rather than as Motion
+   components. A CSS transition on `transform` runs on the compositor and costs
+   nothing in JavaScript, so anything a `:hover` selector can express should
+   never ship as a React component. Motion is reserved for what CSS cannot do:
+   scroll-triggered entrances, staggered sequences, tweened values, and state
+   that has to survive an unmount.
+
+   Every rule below is stripped by the existing
+   `@media (prefers-reduced-motion: reduce)` block above.
+   ========================================================================== */
+
+@layer utilities {
+  /* Card that rises towards the pointer. `will-change` is set only while the
+     element is interactive-hovered, so idle cards keep no compositor layer. */
+  .lift {
+    transition:
+      transform 0.28s var(--ease-out-quart),
+      box-shadow 0.28s var(--ease-out-quart),
+      border-color 0.28s var(--ease-out-quart);
+  }
+
+  @media (hover: hover) {
+    .lift:hover {
+      transform: translateY(-4px);
+      will-change: transform;
+    }
+  }
+
+  .lift:active {
+    transform: translateY(-1px);
+    transition-duration: 0.1s;
+  }
+
+  /* Subtler variant for dense grids, where a 4px rise reads as a jump. */
+  @media (hover: hover) {
+    .lift-sm:hover {
+      transform: translateY(-2px);
+      will-change: transform;
+    }
+  }
+
+  .lift-sm {
+    transition:
+      transform 0.22s var(--ease-out-quart),
+      box-shadow 0.22s var(--ease-out-quart),
+      border-color 0.22s var(--ease-out-quart);
+  }
+
+  .lift-sm:active {
+    transform: translateY(0);
+    transition-duration: 0.1s;
+  }
+
+  /* Tactile press for buttons and toggles. */
+  .press {
+    transition: transform 0.16s var(--ease-out-quart);
+  }
+
+  .press:active {
+    transform: scale(0.97);
+  }
+
+  /* Cursor-follow glow. `--mx`/`--my` are written by the `Spotlight`
+     component; the 50%/0% fallback keeps the card sane before the first
+     pointer event and on touch, where `pointermove` never fires. */
+  .spotlight {
+    position: relative;
+  }
+
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(
+      14rem 14rem at var(--mx, 50%) var(--my, 0%),
+      var(--spot),
+      transparent 70%
+    );
+    transition: opacity 0.3s var(--ease-out-quart);
+  }
+
+  @media (hover: hover) {
+    .spotlight:hover::after {
+      opacity: 1;
+    }
+  }
+
+  /* Light sweep across a filled button. Clipped by the button's own radius. */
+  .sheen {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    transform: translateX(-130%) skewX(-18deg);
+    background: linear-gradient(90deg, transparent, var(--sheen), transparent);
+    transition: transform 0.75s var(--ease-out-quart);
+  }
+
+  @media (hover: hover) {
+    .sheen:hover::after {
+      transform: translateX(130%) skewX(-18deg);
+    }
+  }
+
+  /* Underline that wipes in from the leading edge and out from the trailing
+     one, so repeated hovers read as direction rather than a blink. */
+  .underline-wipe {
+    position: relative;
+  }
+
+  .underline-wipe::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -2px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s var(--ease-out-quart);
+  }
+
+  .underline-wipe:hover::after,
+  .underline-wipe:focus-visible::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  /* SVG stroke that draws itself in. Requires `pathLength="1"` on the path. */
+  .draw-in {
+    stroke-dasharray: 1;
+    animation: var(--animate-draw);
+  }
+
+  /* Loading placeholder with a travelling highlight. */
+  .skeleton {
+    background-image: linear-gradient(
+      90deg,
+      var(--surface-2) 0%,
+      var(--surface-3) 50%,
+      var(--surface-2) 100%
+    );
+    background-size: 220% 100%;
+    animation: var(--animate-shimmer);
+  }
+
+  /* Slowly panning gradient for a single emphasised headline span. */
+  .text-gradient-pan {
+    background: linear-gradient(110deg, var(--fg) 20%, var(--brand) 45%, var(--fg) 70%);
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: var(--animate-gradient-pan);
+  }
+
+  @media (forced-colors: active) {
+    .text-gradient-pan {
+      background: none;
+      color: CanvasText;
+      forced-color-adjust: none;
+    }
+  }
+}
+
+/* Animated <details>. `interpolate-size` is what makes `block-size: auto`
+   animatable at all; where it is unsupported the accordion still opens, it
+   just snaps — which is exactly the pre-existing behaviour, so this is a pure
+   progressive enhancement rather than a fallback to maintain. */
+@supports (interpolate-size: allow-keywords) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  details::details-content {
+    block-size: 0;
+    overflow: clip;
+    opacity: 0;
+    transition:
+      block-size 0.35s var(--ease-out-quart),
+      opacity 0.3s var(--ease-out-quart),
+      content-visibility 0.35s allow-discrete;
+  }
+
+  details[open]::details-content {
+    block-size: auto;
+    opacity: 1;
   }
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, m, useReducedMotion } from 'motion/react';
 import { useTheme } from '@/context/ThemeContext';
 import { cn } from '@/lib/cn';
 
@@ -20,22 +21,43 @@ function MoonIcon() {
   );
 }
 
-/** 44x44 hit area (WCAG 2.5.8) even though the glyph is 18px. */
+/**
+ * 44x44 hit area (WCAG 2.5.8) even though the glyph is 18px.
+ *
+ * The two glyphs cross-fade through a rotation with `mode="wait"` disabled, so
+ * the outgoing icon spins out while the incoming one spins in and the button
+ * never looks momentarily empty. Both are absolutely positioned inside the
+ * hit area: laying them out in flow would make the button jump by a pixel as
+ * the sun's wider bounding box replaces the moon's.
+ */
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme, toggle } = useTheme();
+  const shouldReduce = useReducedMotion();
+  const isDark = theme === 'dark';
 
   return (
     <button
       type="button"
       onClick={toggle}
-      aria-label={theme === 'dark' ? 'Passa al tema chiaro' : 'Passa al tema scuro'}
+      aria-label={isDark ? 'Passa al tema chiaro' : 'Passa al tema scuro'}
       className={cn(
-        'inline-flex size-11 cursor-pointer items-center justify-center rounded-lg',
+        'press relative inline-flex size-11 cursor-pointer items-center justify-center overflow-hidden rounded-lg',
         'text-fg-subtle transition-colors duration-200 hover:bg-surface-2 hover:text-fg',
         className,
       )}
     >
-      {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+      <AnimatePresence initial={false}>
+        <m.span
+          key={isDark ? 'sun' : 'moon'}
+          className="absolute inline-flex"
+          initial={shouldReduce ? false : { opacity: 0, rotate: -75, scale: 0.6 }}
+          animate={{ opacity: 1, rotate: 0, scale: 1 }}
+          exit={shouldReduce ? { opacity: 0 } : { opacity: 0, rotate: 75, scale: 0.6 }}
+          transition={{ duration: shouldReduce ? 0 : 0.3, ease: [0.25, 1, 0.5, 1] }}
+        >
+          {isDark ? <SunIcon /> : <MoonIcon />}
+        </m.span>
+      </AnimatePresence>
     </button>
   );
 }

@@ -15,6 +15,7 @@ import { OverlapDiagrams } from '../components/simulator/OverlapVenn';
 import { PortfolioAnalysis } from '../components/simulator/PortfolioAnalysis';
 
 import { ReturnDisclaimer } from '../components/common/ReturnDisclaimer';
+import { AnimatedNumber, Reveal } from '@/components/motion';
 
 const etfs = etfsData as unknown as ETF[];
 
@@ -31,7 +32,7 @@ function ChartSkeleton({ height }: { height: number }) {
     <div
       style={{ height }}
       aria-hidden="true"
-      className="w-full animate-pulse rounded-xl bg-surface-2"
+      className="skeleton w-full rounded-xl"
     />
   );
 }
@@ -71,18 +72,34 @@ function formatEur(n: number): string {
   }).format(n);
 }
 
-function SummaryCard({ label, value, sub, accent }: {
-  label: string; value: string; sub?: string; accent?: 'blue' | 'green' | 'purple';
+const SUMMARY_ACCENTS = {
+  blue: { surface: 'border-brand/30 bg-brand-soft', text: 'text-brand-soft-fg' },
+  green: { surface: 'border-positive/30 bg-positive-soft', text: 'text-positive-soft-fg' },
+  purple: { surface: 'border-violet/30 bg-violet-soft', text: 'text-violet-soft-fg' },
+} as const;
+
+/**
+ * Headline figure for one of the three projections.
+ *
+ * `value` is a number rather than a preformatted string so the card can tween
+ * between results: every input in the form re-runs the simulation, and a
+ * figure that slides from the old total to the new one shows the direction and
+ * magnitude of the change a slider just caused. `tnum` keeps the digits from
+ * shuffling sideways while it counts.
+ */
+function SummaryCard({ label, value, sub, accent = 'blue' }: {
+  label: string; value: number; sub?: string; accent?: keyof typeof SUMMARY_ACCENTS;
 }) {
-  const border = accent === 'blue' ? 'border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-900/20' :
-    accent === 'green' ? 'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20' : 'border-purple-200 bg-purple-50 dark:border-purple-800 dark:bg-purple-900/20';
-  const text = accent === 'blue' ? 'text-blue-700 dark:text-blue-400' :
-    accent === 'green' ? 'text-green-700 dark:text-green-400' : 'text-purple-700 dark:text-purple-400';
+  const tone = SUMMARY_ACCENTS[accent];
   return (
-    <div className={`border rounded-xl p-4 ${border}`}>
-      <p className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">{label}</p>
-      <p className={`text-2xl font-bold ${text}`}>{value}</p>
-      {sub && <p className="text-xs text-fg-subtle mt-1">{sub}</p>}
+    <div
+      className={`lift-sm rounded-xl border p-4 hover:shadow-md ${tone.surface}`}
+    >
+      <p className="mb-1 text-xs font-medium text-fg-muted">{label}</p>
+      <p className={`tnum text-2xl font-bold ${tone.text}`}>
+        <AnimatedNumber value={value} format={formatEur} />
+      </p>
+      {sub && <p className="mt-1 text-xs text-fg-subtle">{sub}</p>}
     </div>
   );
 }
@@ -343,12 +360,12 @@ export default function SimulatorPage() {
 
             {/* Summary cards */}
             <div className="grid grid-cols-3 gap-4">
-              <SummaryCard label="Valore lordo finale" value={formatEur(result.grossFinal)}
+              <SummaryCard label="Valore lordo finale" value={result.grossFinal}
                 sub={`+${formatEur(result.grossFinal - totalInvested)} su capitale investito`} accent="blue" />
-              <SummaryCard label="Valore netto finale" value={formatEur(result.netFinal)}
+              <SummaryCard label="Valore netto finale" value={result.netFinal}
                 sub={`Fisco: −${formatEur(taxDrag)}`} accent="green" />
               <SummaryCard label={`Reale (inflaz. ${form.inflationRate.toFixed(1)}%)`}
-                value={formatEur(result.realFinal)} sub={`Potere d'acquisto oggi`} accent="purple" />
+                value={result.realFinal} sub={`Potere d'acquisto oggi`} accent="purple" />
             </div>
 
             {/* Tax breakdown */}
@@ -378,11 +395,15 @@ export default function SimulatorPage() {
               </div>
             </div>
 
-            {/* Chart */}
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
-              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Andamento anno per anno</h3>
-              <SimulatorChart data={chartData} />
-            </div>
+            {/* Chart. Wrapped in a reveal because it sits below the fold on
+                every viewport: the summary cards above it are what the page
+                leads with, so the chart can afford to arrive. */}
+            <Reveal amount={0.1}>
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Andamento anno per anno</h3>
+                <SimulatorChart data={chartData} />
+              </div>
+            </Reveal>
 
             {/* Monte Carlo */}
             <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5 space-y-4">
@@ -393,27 +414,34 @@ export default function SimulatorPage() {
                 </p>
               </div>
               <div className="grid grid-cols-3 gap-3">
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Scenario pessimistico (P10)</p>
-                  <p className="text-lg font-bold text-gray-700 dark:text-gray-300">{formatEur(result.monteCarlo.finalP10)}</p>
-                  <p className="text-xs text-fg-subtle mt-0.5">10% dei casi peggiore</p>
+                <div className="lift-sm rounded-lg border border-border p-3 hover:border-border-strong">
+                  <p className="mb-1 text-xs text-fg-muted">Scenario pessimistico (P10)</p>
+                  <p className="tnum text-lg font-bold text-fg-muted">
+                    <AnimatedNumber value={result.monteCarlo.finalP10} format={formatEur} />
+                  </p>
+                  <p className="mt-0.5 text-xs text-fg-subtle">10% dei casi peggiore</p>
                 </div>
-                <div className="border border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
-                  <p className="text-xs text-purple-600 dark:text-purple-400 mb-1">Scenario mediano (P50)</p>
-                  <p className="text-lg font-bold text-purple-700 dark:text-purple-400">{formatEur(result.monteCarlo.finalP50)}</p>
-                  <p className="text-xs text-[var(--data-real)] mt-0.5">Risultato più probabile</p>
+                <div className="lift-sm rounded-lg border border-violet/30 bg-violet-soft p-3 hover:shadow-md">
+                  <p className="mb-1 text-xs text-violet-soft-fg">Scenario mediano (P50)</p>
+                  <p className="tnum text-lg font-bold text-violet-soft-fg">
+                    <AnimatedNumber value={result.monteCarlo.finalP50} format={formatEur} />
+                  </p>
+                  <p className="mt-0.5 text-xs text-violet-soft-fg">Risultato più probabile</p>
                 </div>
-                <div className="border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
-                  <p className="text-xs text-orange-600 dark:text-orange-400 mb-1">Scenario ottimistico (P90)</p>
-                  <p className="text-lg font-bold text-orange-600 dark:text-orange-400">{formatEur(result.monteCarlo.finalP90)}</p>
-                  <p className="text-xs text-orange-400 dark:text-orange-500 mt-0.5">10% dei casi migliore</p>
+                <div className="lift-sm rounded-lg border border-accent/30 bg-accent-soft p-3 hover:shadow-md">
+                  <p className="mb-1 text-xs text-accent-soft-fg">Scenario ottimistico (P90)</p>
+                  <p className="tnum text-lg font-bold text-accent-soft-fg">
+                    <AnimatedNumber value={result.monteCarlo.finalP90} format={formatEur} />
+                  </p>
+                  <p className="mt-0.5 text-xs text-accent-soft-fg">10% dei casi migliore</p>
                 </div>
               </div>
               <MonteCarloChart data={mcChartData} />
             </div>
 
             {/* Year-by-year table */}
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+            <Reveal amount={0.05}>
+              <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
               <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Valori chiave</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -439,9 +467,10 @@ export default function SimulatorPage() {
                         </tr>
                       ))}
                   </tbody>
-                </table>
+                  </table>
+                </div>
               </div>
-            </div>
+            </Reveal>
 
             <ReturnDisclaimer />
           </main>

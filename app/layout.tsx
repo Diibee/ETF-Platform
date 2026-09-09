@@ -3,6 +3,7 @@ import { IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
 import Script from 'next/script';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { SimulatorHandoffProvider } from '@/context/SimulatorHandoffContext';
+import { MotionRoot } from '@/components/motion';
 import '@/index.css';
 
 // Self-hosted at build time: no render-blocking request to fonts.googleapis.com
@@ -79,7 +80,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <style>{'[data-reveal]{opacity:1!important;transform:none!important}'}</style>
         </noscript>
         <ThemeProvider>
-          <SimulatorHandoffProvider>{children}</SimulatorHandoffProvider>
+          <SimulatorHandoffProvider>
+            <MotionRoot>{children}</MotionRoot>
+          </SimulatorHandoffProvider>
         </ThemeProvider>
       </body>
     </html>

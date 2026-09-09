@@ -7,16 +7,49 @@ import { cn } from '@/lib/cn';
    tables, which is why `cn` never needs Tailwind conflict resolution.
    ------------------------------------------------------------------------- */
 
+/* `group` is part of the base so any caller can hang a `group-hover:` rule on
+   the icon it passes as a child — the trailing-arrow nudge is the whole reason
+   these buttons feel responsive rather than merely coloured. `press` gives the
+   whole control a 0.97 scale on pointer-down, which is the one microinteraction
+   that reads on touch as well as with a mouse. */
 const BUTTON_BASE =
-  'inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl px-6 ' +
-  'text-[0.9375rem] font-semibold tracking-tight transition-[background-color,border-color,color,box-shadow] ' +
+  'group inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl px-6 ' +
+  'text-[0.9375rem] font-semibold tracking-tight press ' +
+  'transition-[background-color,border-color,color,box-shadow,transform] ' +
   'duration-200 ease-[var(--ease-out-quart)]';
 
 const BUTTON_VARIANTS = {
-  primary: 'bg-brand text-brand-fg shadow-sm hover:bg-brand-hover hover:shadow-md',
-  secondary: 'border border-border-strong bg-surface text-fg hover:border-brand hover:bg-surface-2',
+  primary: 'sheen bg-brand text-brand-fg shadow-sm hover:bg-brand-hover hover:shadow-md',
+  secondary:
+    'border border-border-strong bg-surface text-fg hover:border-brand hover:bg-surface-2 hover:shadow-sm',
   ghost: 'text-fg-muted hover:bg-surface-2 hover:text-fg',
 } as const;
+
+/**
+ * The arrow that trails a call to action.
+ *
+ * Extracted because it was duplicated inline in three sections with three
+ * slightly different stroke widths, and because the nudge on hover has to be
+ * declared next to the `group` that triggers it to stay legible.
+ */
+export function CtaArrow({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="transition-transform duration-200 ease-[var(--ease-out-quart)] group-hover:translate-x-1"
+    >
+      <path d="M5 12h13M13 6l6 6-6 6" />
+    </svg>
+  );
+}
 
 export function CtaLink({
   href,
@@ -99,16 +132,23 @@ export function Panel({
   children,
   className,
   as: Tag = 'div',
+  hover = false,
 }: {
   children: React.ReactNode;
   className?: string;
   as?: 'div' | 'li' | 'article';
+  /** Adds the rise-and-glow hover state. Off for panels that aren't cards. */
+  hover?: boolean;
 }) {
   return (
     <Tag
       className={cn(
         'rounded-2xl border border-border bg-surface p-6 shadow-xs',
-        'transition-[border-color,box-shadow] duration-200 ease-[var(--ease-out-quart)]',
+        // `transform` is listed here rather than relying on the `.lift`
+        // utility so the hover state below stays in the same declaration as
+        // the transition that drives it.
+        'transition-[transform,border-color,box-shadow] duration-300 ease-[var(--ease-out-quart)]',
+        hover && 'hover:-translate-y-1 hover:border-brand/40 hover:shadow-lg active:translate-y-0 active:duration-100',
         className,
       )}
     >

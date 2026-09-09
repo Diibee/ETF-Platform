@@ -1,22 +1,41 @@
+import { cn } from '@/lib/cn';
+
 interface BadgeProps {
   children: React.ReactNode;
   variant?: 'gray' | 'green' | 'yellow' | 'red' | 'blue' | 'purple';
   size?: 'sm' | 'xs';
+  className?: string;
 }
 
-const variantClasses: Record<NonNullable<BadgeProps['variant']>, string> = {
-  gray:   'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300',
-  green:  'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400',
-  yellow: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400',
-  red:    'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400',
-  blue:   'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400',
-  purple: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-400',
+/**
+ * The variant names stay colour-shaped (`green`, `red`) because the mapping
+ * helpers in `utils/formatters.ts` return them, but every value below now
+ * resolves through the semantic tokens in `index.css`. The previous raw
+ * palette classes (`bg-green-100 dark:text-green-400`) were the recurring
+ * source of sub-4.5:1 pairs in dark mode.
+ */
+const VARIANTS: Record<NonNullable<BadgeProps['variant']>, string> = {
+  gray: 'bg-surface-2 text-fg-muted',
+  green: 'bg-positive-soft text-positive-soft-fg',
+  yellow: 'bg-accent-soft text-accent-soft-fg',
+  red: 'bg-negative-soft text-negative-soft-fg',
+  blue: 'bg-brand-soft text-brand-soft-fg',
+  purple: 'bg-violet-soft text-violet-soft-fg',
 };
 
-export function Badge({ children, variant = 'gray', size = 'sm' }: BadgeProps) {
-  const sizeClass = size === 'xs' ? 'text-xs px-2 py-0.5' : 'text-xs px-2.5 py-1';
+export function Badge({ children, variant = 'gray', size = 'sm', className }: BadgeProps) {
   return (
-    <span className={`inline-flex items-center gap-1 font-medium rounded-md whitespace-nowrap flex-shrink-0 ${sizeClass} ${variantClasses[variant]}`}>
+    <span
+      className={cn(
+        'inline-flex shrink-0 items-center gap-1 rounded-md text-xs font-medium whitespace-nowrap',
+        // Transitions are here so a badge inside a hovered card can be tinted
+        // by the card's `group-hover:` rules without snapping.
+        'transition-[background-color,color,transform] duration-200 ease-[var(--ease-out-quart)]',
+        size === 'xs' ? 'px-2 py-0.5' : 'px-2.5 py-1',
+        VARIANTS[variant],
+        className,
+      )}
+    >
       {children}
     </span>
   );

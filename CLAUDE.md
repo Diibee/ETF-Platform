@@ -9,7 +9,7 @@ Not a regulated financial advisory service — see Disclaimer section.
 
 - **Framework**: Next.js 16 (App Router) + React 19 + TypeScript
 - **Styling**: Tailwind CSS v4 (CSS-first config, `@theme inline` tokens)
-- **Animation**: Motion (`motion/react`) — via the `<Reveal>` primitive only
+- **Animation**: Motion (`motion/react`) — only through the primitives in `src/components/motion/`
 - **Charts**: Recharts (compound curves, Monte Carlo fan charts, correlation heatmap)
 - **Routing**: Next.js file-based routing in `app/`
 - **State**: React Context (no Redux for now)
@@ -33,8 +33,15 @@ MVP 1 and 2. Deployed on Vercel, which detects the framework from `vercel.json`.
   DOM). Load chart components with `next/dynamic` + `ssr: false` and give the
   loader a placeholder of the chart's exact height so CLS stays at 0.
 - **Never animate above-the-fold content from `opacity: 0`.** It delays the
-  Largest Contentful Paint by the full animation duration. `<Reveal>` is for
-  below-the-fold sections only.
+  Largest Contentful Paint by the full animation duration. `<Reveal>` and
+  `<StaggerGroup>` are for below-the-fold sections only. Above the fold, the
+  only motion allowed is on properties that leave the text painted from the
+  first frame — the hero chart's `stroke-dashoffset`, a status dot's pulse.
+- **Motion is for what CSS cannot do**: scroll triggers, staggered sequences,
+  tweened values, exit animations. Hover and press states belong in the
+  interaction utilities in `src/index.css` (`.lift`, `.press`, `.sheen`,
+  `.spotlight`, `.underline-wipe`) — a compositor-driven CSS transition costs
+  no JavaScript and no component.
 - **Tailwind's scan roots are declared explicitly** via `@source` in
   `src/index.css`. A class used only in a directory that is not listed will be
   silently dropped from the generated CSS.
@@ -67,7 +74,8 @@ etf-platform/
 │   │   ├── simulator/        # Compound calculator, Monte Carlo chart
 │   │   ├── portfolio/        # Overlap, correlation matrix, look-through
 │   │   ├── questionnaire/    # Profiling flow + recommendation output
-│   │   ├── landing/          # Landing page sections + Reveal primitive
+│   │   ├── landing/          # Landing page sections
+│   │   ├── motion/           # Motion primitives (see below)
 │   │   └── common/           # Button, Card, Badge, Modal, Disclaimer
 │   ├── data/
 │   │   └── etfs.json         # Static ETF records (seed with 15–20 ETFs)
@@ -83,6 +91,32 @@ etf-platform/
 │   └── index.css             # Design tokens (dashboard + landing layers)
 └── public/
 ```
+
+### Motion primitives (`src/components/motion/`)
+
+`MotionRoot` provides the one `LazyMotion` feature bundle (`domAnimation`) for
+the whole app, from the root layout. Everything below it uses `m.*`, never
+`motion.*` — `strict` mode enforces that. Nothing loads `domMax`: the sliding
+nav indicators animate measured offsets rather than using `layoutId`, so the
+layout-projection bundle never ships.
+
+| Primitive | Use it for |
+|---|---|
+| `Reveal` | One block entering on scroll. `variant`: up / down / left / right / fade / scale / blur. |
+| `StaggerGroup` + `StaggerItem` | A list or grid cascading in. One IntersectionObserver per group, not per item — this is what makes it safe on the 95-card catalogue. |
+| `CountUp` | A stat that counts up the first time it is seen. Server-safe: formatting is described with props, not a callback. |
+| `AnimatedNumber` | A figure that re-tweens whenever it changes (filter counts, simulation results). Client components only. |
+| `Spotlight` | Cursor-following glow on a card. Writes CSS custom properties, never state. |
+| `ScrollProgress` | Reading-progress hairline. |
+
+Every one of them renders the plain final state under
+`prefers-reduced-motion: reduce`, in JS rather than CSS: Motion animates
+through the Web Animations API, so the global media query in `index.css`
+cannot reach it.
+
+Revealed elements carry `data-reveal`, which the `<noscript>` rule in the root
+layout forces visible — without it, a crawler or a no-JS reader would see the
+inline `opacity: 0` and nothing else.
 
 ---
 
@@ -386,6 +420,9 @@ Cover all four asset classes and both dividend policies:
 - Do NOT hardcode colours (`text-red-600`, `text-gray-400`, hex values) — use
   the semantic tokens in `src/index.css`. Raw Tailwind palette colours have
   repeatedly failed the 4.5:1 contrast floor in dark mode.
+- Do NOT reach for a Motion component when a `:hover` rule would do. Hover and
+  press states are CSS utilities; Motion is for scroll, stagger, tweens and
+  exits.
 - Do NOT show gross-only returns without a net alternative.
 - Do NOT build MVP 3 features before MVP 1 is complete.
 - Do NOT add a backend before it is explicitly requested.
